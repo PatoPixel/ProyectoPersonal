@@ -34,7 +34,7 @@ public class ActuacionesModel {
 		private int activo;
 		
 		@ManyToOne
-		@JoinColumn(name = "expedientes_id", nullable = false)
+		@JoinColumn(name = "expediente", referencedColumnName = "expediente_id", nullable = false)
 		private ExpedientesModel expediente;
 
 		
@@ -105,16 +105,22 @@ public class ActuacionesModel {
 			super();
 		}
 		
-		
-		public ActuacionesModel(int id, String descripcion, int finalizado, String modalidad,LocalDate fecha, int activo,
-				ExpedientesModel expediente) {
-			this.actuaciones_id = id;
+		public ActuacionesModel(String descripcion, int finalizado, String modalidad,LocalDate fecha, ExpedientesModel expediente) {
 			this.descripcion = descripcion;
 			this.finalizado = finalizado;
 			this.fecha = fecha;
 			this.modalidad = modalidad;
-			this.activo = activo;
 			this.expediente = expediente;
+			this.activo = 1;
+		}
+		
+		public ActuacionesModel(String descripcion, int finalizado, String modalidad,LocalDate fecha, ExpedientesModel expediente, int activo) {
+			this.descripcion = descripcion;
+			this.finalizado = finalizado;
+			this.fecha = fecha;
+			this.modalidad = modalidad;
+			this.expediente = expediente;
+			this.activo = activo;
 		}
 		
 		

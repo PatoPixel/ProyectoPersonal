@@ -29,7 +29,7 @@ public class DocumentosModel {
 			private int activo;
 			
 			@ManyToOne
-			@JoinColumn(name = "expedientes_id", nullable = false)
+			@JoinColumn(name = "expediente", referencedColumnName = "expediente_id", nullable = false)
 			private ExpedientesModel expediente;
 
 			public int getId() {
@@ -90,14 +90,22 @@ public class DocumentosModel {
 			}
 			
 			
-			public DocumentosModel(int id, String ruta, float tarifa, int activo, String categoria ,ExpedientesModel expediente) {
+			public DocumentosModel(String ruta, float tarifa, String categoria ,ExpedientesModel expediente) {
 				super();
-				this.documentos_id = id;
 				this.ruta = ruta;
 				this.tarifa = tarifa;
 				this.categoria = categoria;
-				this.activo = activo;
 				this.expediente = expediente;
+				this.activo = 1;
+			}
+			
+			public DocumentosModel(String ruta, float tarifa, String categoria ,ExpedientesModel expediente, int activo) {
+				super();
+				this.ruta = ruta;
+				this.tarifa = tarifa;
+				this.categoria = categoria;
+				this.expediente = expediente;
+				this.activo = activo;
 			}
 
 			

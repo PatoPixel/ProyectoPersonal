@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -39,11 +40,11 @@ public class TiposExpedienteController {
 	
 	
 	 	//FinByMateria
-	
+	@GetMapping("/consultar/{materia}")
 	public ResponseEntity<?> getByMateria(@PathVariable String materia) {
-		Optional<TiposExpedienteModel> expediente = tiposService.findByMateria(materia);
-		if (expediente.isPresent()) {
-			return ResponseEntity.ok(expediente.get());
+		Optional<TiposExpedienteModel> tipoExpediente = tiposService.findByMateria(materia);
+		if (tipoExpediente.isPresent()) {
+			return ResponseEntity.ok(tipoExpediente.get());
 		}else {
 			String mensaje = "No se encontró ninguna materia con el nombre: " + materia;
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(mensaje);
@@ -57,10 +58,12 @@ public class TiposExpedienteController {
 	
 			//Solo materia (Activo valor predeterminado 1)
 	
+	
+	//@todo
 	@PostMapping("/insertar/{materia}")
 	public ResponseEntity<?> createTiposExpediente(@PathVariable String materia) {
-		Optional<TiposExpedienteModel> expediente = tiposService.findByMateria(materia);
-		if (expediente.isPresent()) {
+		Optional<TiposExpedienteModel> tipoExpediente = tiposService.findByMateria(materia);
+		if (tipoExpediente.isPresent()) {
 			String mensaje = "Ya existe un tipo de expediente con el nombre: " + materia;
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(mensaje);
 		}else {
@@ -75,8 +78,8 @@ public class TiposExpedienteController {
 	
 	@PostMapping("/insertar/{materia}/{activo}")
 	public ResponseEntity<?> createTiposExpedienteActivo(@PathVariable String materia, @PathVariable int activo) {
-		Optional<TiposExpedienteModel> expediente = tiposService.findByMateria(materia);
-		if (expediente.isPresent()) {
+		Optional<TiposExpedienteModel> tipoExpediente = tiposService.findByMateria(materia);
+		if (tipoExpediente.isPresent()) {
 			String mensaje = "Ya existe un tipo de expediente con el nombre: " + materia;
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(mensaje);
 		}else {
@@ -119,7 +122,7 @@ public class TiposExpedienteController {
 	
 			//Puedes modificar la materia junto con el activo
 	@PutMapping("/actualizar/{materia}/{materiaNueva}/{activo}")
-	public ResponseEntity<?> actualizarTiposExpedienteActivo(@PathVariable String materia, @PathVariable String materiaNueva, @PathVariable int activo) {
+	public ResponseEntity<?> actualizarTiposExpediente(@PathVariable String materia, @PathVariable String materiaNueva, @PathVariable int activo) {
 		Optional<TiposExpedienteModel> tipoExpediente = tiposService.findByMateria(materia);
 		Optional<TiposExpedienteModel> tipoExpedienteNuevo = tiposService.findByMateria(materiaNueva);
 		
@@ -164,6 +167,21 @@ public class TiposExpedienteController {
 				String mensaje = "No existe un tipo de expediente con el nombre: " + materia;
 				return ResponseEntity.status(HttpStatus.NOT_FOUND).body(mensaje);
 			}
-		}	
+		}
 		
+		//Borrado Fisico NO ES RECOMENDADO USARLO PARA ESTO, BORRARA TODO LO RELACIONADO QUE TENGA
+		
+		@DeleteMapping("/borradofisico/{materia}")
+		public ResponseEntity<?> borradoFisicoTiposExpediente(@PathVariable String materia){
+			Optional<TiposExpedienteModel> tipoExpediente = tiposService.findByMateria(materia);
+			
+			if (tipoExpediente.isPresent()) {
+				tiposService.DeleteTiposExpediente(materia);
+				return ResponseEntity.ok("Materia borrada");
+			} else {
+				return ResponseEntity.ok("No existe ninguna materia con el nombre " + materia);
+			}
+		}
+	
+		 
 }

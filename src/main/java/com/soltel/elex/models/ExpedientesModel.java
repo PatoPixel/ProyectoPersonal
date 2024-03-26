@@ -17,7 +17,7 @@ public class ExpedientesModel {
 	// Atributos (campos BBDD)
 	
 	@Id
-	private int expedientes_id;
+	private int expediente_id;
 	
 	@Column
 	private String codigo;
@@ -54,12 +54,12 @@ public class ExpedientesModel {
 	// Setters y Getters
 	
 	
-	public int getExpedientes_id() {
-		return expedientes_id;
+	public int getId() {
+		return expediente_id;
 	}
 
-	public void setExpedientes_id(int expedientes_id) {
-		this.expedientes_id = expedientes_id;
+	public void setId(int id) {
+		this.expediente_id = id;
 	}
 
 	public String getCodigo() {
@@ -143,10 +143,26 @@ public class ExpedientesModel {
 		super();
 	}
 
-	public ExpedientesModel(int expedientes_id, String codigo, LocalDate fecha, Situacion situacion, String opciones,
+	
+	// Constructor con Activo en 1
+	public ExpedientesModel(String codigo, LocalDate fecha, Situacion situacion, String opciones,
+			String descripcion, String prioridad, String ubicacion, TiposExpedienteModel tipoExpediente) {
+		super();
+		this.codigo = codigo;
+		this.fecha = fecha;
+		this.situacion = situacion;
+		this.opciones = opciones;
+		this.descripcion = descripcion;
+		this.prioridad = prioridad;
+		this.ubicacion = ubicacion;
+		this.tipoExpediente = tipoExpediente;
+		this.activo = 1;
+	}
+	
+	// Constructor el cual se puede cambiar el activo
+	public ExpedientesModel(String codigo, LocalDate fecha, Situacion situacion, String opciones,
 			String descripcion, String prioridad, String ubicacion, TiposExpedienteModel tipoExpediente, int activo) {
 		super();
-		this.expedientes_id = expedientes_id;
 		this.codigo = codigo;
 		this.fecha = fecha;
 		this.situacion = situacion;

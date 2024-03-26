@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.soltel.elex.repositories.ITiposExpedienteRepository;
 import com.soltel.elex.models.TiposExpedienteModel;
@@ -31,7 +32,16 @@ public class TiposExpedienteService {
 		return tiposRepository.findByMateria(materia);
 	}
 	
+	
+	//Create and Update
 	public TiposExpedienteModel CreateYUpdateTiposExpediente(TiposExpedienteModel tipo){
 		return tiposRepository.save(tipo);
 	}
- }
+	
+	
+	//Delete
+	@Transactional
+	public void DeleteTiposExpediente (String materia) {
+		tiposRepository.deleteByMateria(materia);
+	}
+}	

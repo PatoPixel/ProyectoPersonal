@@ -27,7 +27,7 @@ COMMENT "Tabla Principal Tipos -> Expedientes";
 -- 2. Tabla Expedientes
 CREATE TABLE expedientes
 (
-	expedientes_id INT NOT NULL UNIQUE AUTO_INCREMENT,
+	expediente_id INT NOT NULL UNIQUE AUTO_INCREMENT,
     codigo VARCHAR(50) NOT NULL UNIQUE,
     fecha DATE NOT NULL,
     situacion ENUM('Pendiente','Enviado', 'Fallo') DEFAULT 'Pendiente',
@@ -37,8 +37,8 @@ CREATE TABLE expedientes
     ubicacion VARCHAR(100) NOT NULL,
 	tipo TINYINT NOT NULL,
     activo TINYINT NOT NULL DEFAULT '1',
-    FOREIGN KEY (tipo) REFERENCES tipos_expediente (tipos_id),
-    PRIMARY KEY PK_expedientes (expedientes_id)
+    FOREIGN KEY (tipo) REFERENCES tipos_expediente (tipos_id) ON DELETE CASCADE ON UPDATE CASCADE,
+    PRIMARY KEY PK_expediente (expediente_id)
 )
 COMMENT "Tabla Principal Expedientes";
 
@@ -52,7 +52,7 @@ CREATE TABLE actuaciones
     modalidad VARCHAR(50) NOT NULL,  -- Con modalidad hago referencia a si es una reunión, llamada telefónica, envío de correo, etc
     expediente INT NOT NULL,
     activo TINYINT NOT NULL DEFAULT '1',
-    FOREIGN KEY (expediente) REFERENCES expedientes (expedientes_id),
+    FOREIGN KEY (expediente) REFERENCES expedientes (expediente_id) ON DELETE CASCADE ON UPDATE CASCADE,
     PRIMARY KEY PK_actuaciones (actuaciones_id)
 );
 
@@ -65,7 +65,7 @@ CREATE TABLE documentos
     categoria VARCHAR(50) NOT NULL,  -- (legal, financiero, técnico, etc.).
     expediente INT NOT NULL,
     activo TINYINT NOT NULL DEFAULT '1',
-    FOREIGN KEY (expediente) REFERENCES expedientes (expedientes_id),
+    FOREIGN KEY (expediente) REFERENCES expedientes (expediente_id) ON DELETE CASCADE ON UPDATE CASCADE,
     PRIMARY KEY PK_documentos (documentos_id)
 );
 
@@ -82,7 +82,7 @@ VALUES
 INSERT INTO actuaciones
 (descripcion, finalizado, fecha, modalidad,expediente)
 VALUES
-("Actuación 1", 0, "2024-03-20", "reunion", 1),
+("Actuacion 1", 0, "2024-03-20", "reunion", 1),
 ("Actuación 2", 0, "2024-03-20", "meet", 2),
 ("Actuación 3", 1, "2024-03-21", "llamada telefónica", 3);
 
@@ -90,9 +90,9 @@ VALUES
 INSERT INTO documentos
 (ruta, tarifa, categoria,expediente)
 VALUES 
-("static/pdfs/doc001.dpdf", 100.55, "Sport", 1),
-("static/pdfs/doc002.dpdf", 90.55, "Futbil", 2),
-("static/pdfs/doc003.dpdf", 80.55, "Financiera", 3);
+("static/pdfs/doc001d.pdf", 100.55, "Sport", 1),
+("static/pdfs/doc002d.pdf", 90.55, "Futbil", 2),
+("static/pdfs/doc003d.pdf", 80.55, "Financiera", 3);
 
 SELECT * FROM tipos_expediente;
 SELECT * FROM expedientes;

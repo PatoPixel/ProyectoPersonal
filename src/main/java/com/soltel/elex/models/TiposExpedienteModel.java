@@ -51,6 +51,8 @@ public class TiposExpedienteModel {
 	
 	public TiposExpedienteModel() {}
 	
+	
+	//Constructor con activo = 1
 	public TiposExpedienteModel(String materia) {
 	    this(materia, 1); // Se establece el valor predeterminado a 1
 	}
