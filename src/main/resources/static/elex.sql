@@ -30,7 +30,7 @@ CREATE TABLE expedientes
 	expediente_id INT NOT NULL UNIQUE AUTO_INCREMENT,
     codigo VARCHAR(50) NOT NULL UNIQUE,
     fecha DATE NOT NULL,
-    situacion ENUM('Pendiente','Enviado', 'Fallo') DEFAULT 'Pendiente',
+    situacion ENUM('Pendiente','Enviado', 'En_Proceso', 'En_Espera_De_Juicio', 'Resuelto', 'Apelación', 'Cerrado') DEFAULT 'Pendiente',
     opciones VARCHAR(70) DEFAULT "",
     descripcion VARCHAR(255) NOT NULL,
     prioridad VARCHAR(20) NOT NULL,  -- (baja, media, alta, etc.).
@@ -76,13 +76,13 @@ INSERT INTO expedientes
 (codigo, fecha, situacion, opciones, descripcion,prioridad, ubicacion, tipo)
 VALUES
 ("SEV-20240320-001", "2024-03-20", 'Pendiente', "Urgente, Confidencial", "Test1", "Alta", "Sevilla/Edificio Sevilla 1", 1),
-("SEV-20240320-002", "2024-03-20", 'Pendiente', "Urgente, Confidencial", "Test2", "Media", "Madrid/C. Principal", 2),
+("SEV-20240320-002", "2024-03-20", 'En_Espera_De_Juicio', "Urgente, Confidencial", "Test2", "Media", "Madrid/C. Principal", 2),
 ("SEV-20240320-003", "2024-03-20", 'Enviado', "Urgente", "Test3", "Baja", "Barcelona/casa", 1);
 
 INSERT INTO actuaciones
 (descripcion, finalizado, fecha, modalidad,expediente)
 VALUES
-("Actuacion 1", 0, "2024-03-20", "reunion", 1),
+("Actuacion1", 0, "2024-03-20", "reunion", 1),
 ("Actuación 2", 0, "2024-03-20", "meet", 2),
 ("Actuación 3", 1, "2024-03-21", "llamada telefónica", 3);
 

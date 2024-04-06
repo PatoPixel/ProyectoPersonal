@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.soltel.elex.models.ExpedientesModel;
@@ -41,8 +42,8 @@ public class ExpedientesController {
 		//FindALL
 	
 	@GetMapping("/consultar")
-	public ResponseEntity<List<ExpedientesModel>> getAllTipos(){
-		return ResponseEntity.ok(expedienteService.findAllTipos());
+	public ResponseEntity<List<ExpedientesModel>> getAllExpedientes(){
+		return ResponseEntity.ok(expedienteService.findAllExpedientes());
 	}
 	
 	
@@ -63,45 +64,10 @@ public class ExpedientesController {
 	// Insertar  
 	
 	
-			//Solo Codigo (Activo valor predeterminado 1)
-	
-	
-	//
-	/**
-	 * @todo
-	 * @param Comprobar que la sesion está iniciada
-	 * @return 
-	 */
-	@PostMapping("/insertar/{Codigo}/{fecha}/{situacion}/{opciones}/{descripcion}/{prioridad}/{ubicacion}/{materia}")
-	public ResponseEntity<?> createTiposExpediente
-	(@PathVariable String Codigo, @PathVariable LocalDate fecha, @PathVariable Situacion situacion, @PathVariable String opciones,
-	@PathVariable String descripcion, @PathVariable String prioridad, @PathVariable String ubicacion, @PathVariable String materia) {
-		
-		Optional<ExpedientesModel> expediente = expedienteService.findByCodigo(Codigo);
-		if (expediente.isPresent()) {
-			String mensaje = "Ya existe un expediente con codigo: " + Codigo;
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(mensaje);
-		}else {
-			Optional<TiposExpedienteModel> tipoExpediente = tiposService.findByMateria(materia);
-			if (!tipoExpediente.isPresent()) {
-				String mensaje = "No existe un tipo de expediente con el nombre: " + materia;
-				return ResponseEntity.status(HttpStatus.NOT_FOUND).body(mensaje);
-			}else {
-			TiposExpedienteModel tipo = tipoExpediente.get();
-			ExpedientesModel nuevoExpediente = new ExpedientesModel(Codigo, fecha, situacion, opciones, descripcion, prioridad, ubicacion, tipo);
-			ExpedientesModel guardarExpediente = expedienteService.CreateYUpdateExpedientes(nuevoExpediente);
-			return ResponseEntity.ok(guardarExpediente);
-			
-			}
-		}
-	}
-	
-			//Puedes modificar el activo
-	
 	@PostMapping("/insertar/{Codigo}/{fecha}/{situacion}/{opciones}/{descripcion}/{prioridad}/{ubicacion}/{materia}/{activo}")
 	public ResponseEntity<?> createTiposExpediente
 	(@PathVariable String Codigo, @PathVariable LocalDate fecha, @PathVariable Situacion situacion, @PathVariable String opciones,
-	@PathVariable String descripcion, @PathVariable String prioridad, @PathVariable String ubicacion, @PathVariable String materia, @PathVariable int activo) {
+	@PathVariable String descripcion, @PathVariable String prioridad, @PathVariable String ubicacion, @PathVariable String materia, @RequestParam(required = false) Integer activo) {
 		
 		Optional<ExpedientesModel> expediente = expedienteService.findByCodigo(Codigo);
 		if (expediente.isPresent()) {
@@ -113,6 +79,8 @@ public class ExpedientesController {
 				String mensaje = "No existe un tipo de expediente con el nombre: " + materia;
 				return ResponseEntity.status(HttpStatus.NOT_FOUND).body(mensaje);
 			}else {
+				if (activo == null) activo = 1;
+				
 			TiposExpedienteModel tipo = tipoExpediente.get();
 			ExpedientesModel nuevoExpediente = new ExpedientesModel(Codigo, fecha, situacion, opciones, descripcion, prioridad, ubicacion, tipo, activo);
 			ExpedientesModel guardarExpediente = expedienteService.CreateYUpdateExpedientes(nuevoExpediente);
@@ -124,65 +92,36 @@ public class ExpedientesController {
 	
 	
 	//Update
-	
-			//Solo Codigo (Activo valor predeterminado 1)
-	
-	@PutMapping("/actualizar/{Codigo}/{CodigoNuevo}/{fecha}/{situacion}/{opciones}/{descripcion}/{prioridad}/{ubicacion}/{materia}")
-	public ResponseEntity<?> actualizarTiposExpediente
-	(@PathVariable String Codigo, @PathVariable String CodigoNuevo, @PathVariable LocalDate fecha, @PathVariable Situacion situacion, @PathVariable String opciones,
-	@PathVariable String descripcion, @PathVariable String prioridad, @PathVariable String ubicacion, @PathVariable String materia) {
-				
-		Optional<ExpedientesModel> expediente = expedienteService.findByCodigo(Codigo);
-		Optional<ExpedientesModel> expedienteNuevo = expedienteService.findByCodigo(CodigoNuevo);
-		
-		if (expediente.isPresent() && !expedienteNuevo.isPresent()) {
-			
-			Optional<TiposExpedienteModel> tipoExpediente = tiposService.findByMateria(materia);
-			if (!tipoExpediente.isPresent()) {
-				String mensaje = "No existe un tipo de expediente con el nombre: " + materia;
-				return ResponseEntity.status(HttpStatus.NOT_FOUND).body(mensaje);
-				}else {
-					TiposExpedienteModel tipo = tipoExpediente.get();
-					ExpedientesModel expedienteActualizado = expediente.get();
-					expedienteActualizado.setCodigo(CodigoNuevo);
-					expedienteActualizado.setFecha(fecha);
-					expedienteActualizado.setSituacion(situacion);
-					expedienteActualizado.setOpciones(opciones);
-					expedienteActualizado.setDescripcion(descripcion);	
-					expedienteActualizado.setPrioridad(prioridad);
-					expedienteActualizado.setUbicacion(ubicacion);
-					expedienteActualizado.setTipoExpediente(tipo);
-					ExpedientesModel guardarExpediente = expedienteService.CreateYUpdateExpedientes(expedienteActualizado);
-					return ResponseEntity.ok(guardarExpediente);
-			}
-		}else if (!expediente.isPresent()){
-			String mensaje = "No existe un expediente con código: " + Codigo;
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(mensaje);
-			
-			}else{
-				String mensaje = "Ya existe un expediente con código: " + CodigoNuevo;
-				return ResponseEntity.status(HttpStatus.NOT_FOUND).body(mensaje);
-			}
-		}
-	
-	
-	
-			//Puedes modificar la Codigo junto con el activo
+
 	@PutMapping("/actualizar/{Codigo}/{CodigoNuevo}/{fecha}/{situacion}/{opciones}/{descripcion}/{prioridad}/{ubicacion}/{materia}/{activo}")
 	public ResponseEntity<?> actualizarTiposExpedienteActivo
 	(@PathVariable String Codigo, @PathVariable String CodigoNuevo, @PathVariable LocalDate fecha, @PathVariable Situacion situacion, @PathVariable String opciones,
-	@PathVariable String descripcion, @PathVariable String prioridad, @PathVariable String ubicacion, @PathVariable String materia, @PathVariable int activo) {
+	@PathVariable String descripcion, @PathVariable String prioridad, @PathVariable String ubicacion, @PathVariable String materia, @RequestParam(required = false) Integer activo) {
 				
 		Optional<ExpedientesModel> expediente = expedienteService.findByCodigo(Codigo);
 		Optional<ExpedientesModel> expedienteNuevo = expedienteService.findByCodigo(CodigoNuevo);
+		int expedienteDatos;
+		int expedienteNuevoDatos;
 		
-		if (expediente.isPresent() && !expedienteNuevo.isPresent()) {
+		
+		if (expediente.isPresent() && expedienteNuevo.isPresent()) {
+			expedienteDatos = expediente.get().getId();
+			expedienteNuevoDatos = expedienteNuevo.get().getId();
+		}else {
+			expedienteDatos = expediente.map(ExpedientesModel::getId).orElse(0); // Asigna 0 si el expediente está vacío
+		    expedienteNuevoDatos = expedienteNuevo.map(ExpedientesModel::getId).orElse(1); // Asigna 1 si el expedienteNuevo está vacío
+		}
+		
+		if (expediente.isPresent() && !expedienteNuevo.isPresent() ||
+				expedienteDatos == expedienteNuevoDatos) {
 			
 			Optional<TiposExpedienteModel> tipoExpediente = tiposService.findByMateria(materia);
 			if (!tipoExpediente.isPresent()) {
 				String mensaje = "No existe un tipo de expediente con el nombre: " + materia;
 				return ResponseEntity.status(HttpStatus.NOT_FOUND).body(mensaje);
 				}else {
+					if (activo == null) activo = 1;
+					
 					TiposExpedienteModel tipo = tipoExpediente.get();
 					ExpedientesModel expedienteActualizado = expediente.get();
 					expedienteActualizado.setCodigo(CodigoNuevo);
@@ -245,6 +184,106 @@ public class ExpedientesController {
 				return ResponseEntity.ok("No existe ningún expediente con código: " + Codigo);
 			}
 		}
+		
+		// --------------------------------------------------------------	
+		
+		// ESTA PARTE ES SOLO PARA QUE FUNCIONE EL ANGULAR YA QUE NO NOS PERMITE USAR PUT/DELETE TENMOS QUE USAR POST	
+			
+		// --------------------------------------------------------------
+		
+		//Update
+
+		@PostMapping("/actualizar/{Codigo}/{CodigoNuevo}/{fecha}/{situacion}/{opciones}/{descripcion}/{prioridad}/{ubicacion}/{materia}/{activo}")
+		public ResponseEntity<?> actualizarTiposExpedienteActivoPOST
+		(@PathVariable String Codigo, @PathVariable String CodigoNuevo, @PathVariable LocalDate fecha, @PathVariable Situacion situacion, @PathVariable String opciones,
+		@PathVariable String descripcion, @PathVariable String prioridad, @PathVariable String ubicacion, @PathVariable String materia, @RequestParam(required = false) Integer activo) {
+					
+			Optional<ExpedientesModel> expediente = expedienteService.findByCodigo(Codigo);
+			Optional<ExpedientesModel> expedienteNuevo = expedienteService.findByCodigo(CodigoNuevo);
+			int expedienteDatos;
+			int expedienteNuevoDatos;
+			
+			
+			if (expediente.isPresent() && expedienteNuevo.isPresent()) {
+				expedienteDatos = expediente.get().getId();
+				expedienteNuevoDatos = expedienteNuevo.get().getId();
+			}else {
+				expedienteDatos = expediente.map(ExpedientesModel::getId).orElse(0); // Asigna 0 si el expediente está vacío
+			    expedienteNuevoDatos = expedienteNuevo.map(ExpedientesModel::getId).orElse(1); // Asigna 1 si el expedienteNuevo está vacío
+			}
+			
+			if (expediente.isPresent() && !expedienteNuevo.isPresent() ||
+					expedienteDatos == expedienteNuevoDatos) {
+				
+				Optional<TiposExpedienteModel> tipoExpediente = tiposService.findByMateria(materia);
+				if (!tipoExpediente.isPresent()) {
+					String mensaje = "No existe un tipo de expediente con el nombre: " + materia;
+					return ResponseEntity.status(HttpStatus.NOT_FOUND).body(mensaje);
+					}else {
+						if (activo == null) activo = 1;
+						
+						TiposExpedienteModel tipo = tipoExpediente.get();
+						ExpedientesModel expedienteActualizado = expediente.get();
+						expedienteActualizado.setCodigo(CodigoNuevo);
+						expedienteActualizado.setFecha(fecha);
+						expedienteActualizado.setSituacion(situacion);
+						expedienteActualizado.setOpciones(opciones);
+						expedienteActualizado.setDescripcion(descripcion);	
+						expedienteActualizado.setPrioridad(prioridad);
+						expedienteActualizado.setUbicacion(ubicacion);
+						expedienteActualizado.setTipoExpediente(tipo);
+						expedienteActualizado.setActivo(activo);
+						ExpedientesModel guardarExpediente = expedienteService.CreateYUpdateExpedientes(expedienteActualizado);
+						return ResponseEntity.ok(guardarExpediente);
+				}
+			}else if (!expediente.isPresent()){
+				String mensaje = "No existe un expediente con código: " + Codigo;
+				return ResponseEntity.status(HttpStatus.NOT_FOUND).body(mensaje);
+				
+				}else{
+					String mensaje = "Ya existe un expediente con código: " + CodigoNuevo;
+					return ResponseEntity.status(HttpStatus.NOT_FOUND).body(mensaje);
+				}
+			}
+		
+		
+		
+		
+		//Borrado 
+				
+		
+			//Borrado Logico
+		
+			@PostMapping("/borrarlogico/{Codigo}")
+			public ResponseEntity<?> borradoLogicoTiposExpedientePOST(@PathVariable String Codigo) {
+				Optional<ExpedientesModel> expediente = expedienteService.findByCodigo(Codigo);
+				
+				if (expediente.isPresent()) {
+					
+					ExpedientesModel expedienteBorrarLogico = expediente.get();
+					expedienteBorrarLogico.setActivo(0);
+					ExpedientesModel guardarExpediente = expedienteService.CreateYUpdateExpedientes(expedienteBorrarLogico);
+					return ResponseEntity.ok(guardarExpediente);
+					
+				}else{
+					String mensaje = "No existe un expediente con código: " + Codigo;
+					return ResponseEntity.status(HttpStatus.NOT_FOUND).body(mensaje);
+				}
+			}
+			
+			//Borrado Fisico NO ES RECOMENDADO USARLO PARA ESTO, BORRARA TODO LO RELACIONADO QUE TENGA
+			
+			@PostMapping("/borradofisico/{Codigo}")
+			public ResponseEntity<?> borradoFisicoTiposExpedientePOST(@PathVariable String Codigo){
+				Optional<ExpedientesModel> expediente = expedienteService.findByCodigo(Codigo);
+				
+				if (expediente.isPresent()) {
+					expedienteService.DeleteTiposExpediente(Codigo);
+					return ResponseEntity.ok("Expediente borrado");
+				} else {
+					return ResponseEntity.ok("No existe ningún expediente con código: " + Codigo);
+				}
+			}
 	
 		 
 }

@@ -22,7 +22,7 @@ private final IExpedientesRepository expedientesRepository;
 
 	//FindAll
 
-		public List<ExpedientesModel> findAllTipos(){
+		public List<ExpedientesModel> findAllExpedientes(){
 			return expedientesRepository.findAll();
 	}
 
@@ -42,4 +42,6 @@ private final IExpedientesRepository expedientesRepository;
 		public void DeleteTiposExpediente (String codigo) {
 			expedientesRepository.deleteByCodigo(codigo);
 	}
+		
+	
 }

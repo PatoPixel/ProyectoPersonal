@@ -40,7 +40,7 @@ private final IActuacionesRepository actuacionesRepository;
 		
 	//Delete
 		@Transactional
-		public void DeleteDocumentos (String descripcion, ExpedientesModel expediente) {
+		public void DeleteActuaciones (String descripcion, ExpedientesModel expediente) {
 			actuacionesRepository.deleteByDescripcionAndExpediente(descripcion, expediente);
 	}
 }

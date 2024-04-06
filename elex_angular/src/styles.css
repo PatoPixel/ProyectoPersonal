@@ -1,0 +1,23 @@
+/* You can add global styles to this file, and also import other style files */
+.center-nav {
+    background-color: rgb(228, 223, 218, 0.6);
+    margin: 1em auto;
+    max-width: 950px;
+  }
+  .example-wrapper {
+    margin: 1em auto;
+    max-width: 900px;
+  }
+
+  .tabla {
+    max-width: 800px;
+  }
+  .fw-bolder {
+    color: #000; /* Cambia este valor al color que desees */
+  }
+  .hidden {
+    display: none;
+  }
+  .w-40 {
+    width: 40%;
+  }

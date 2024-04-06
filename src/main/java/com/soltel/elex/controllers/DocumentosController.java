@@ -61,45 +61,10 @@ public class DocumentosController {
 	
 	
 	// Insertar  
-	
-	
-			//Solo ruta (Activo valor predeterminado 1)
-	
-	
-	//
-	/**
-	 * @todo
-	 * @param Comprobar que la sesion está iniciada
-	 * @return 
-	 */
-	@PostMapping("/insertar/{ruta}/{tarifa}/{categoria}/{expediente}")
-	public ResponseEntity<?> createTiposdocumento
-	(@RequestParam("ruta") String ruta, @PathVariable float tarifa, @PathVariable String categoria, @PathVariable String expediente) {
-		
-		Optional<DocumentosModel> documento = documentoService.findByRuta(ruta);
-		if (documento.isPresent()) {
-			String mensaje = "Ya existe un documento con ruta: " + ruta;
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(mensaje);
-		}else {
-			Optional<ExpedientesModel> expedienteCodigo = expedienteService.findByCodigo(expediente);
-			if (!expedienteCodigo.isPresent()) {
-				String mensaje = "No existe un expediente con codigo: " + expediente;
-				return ResponseEntity.status(HttpStatus.NOT_FOUND).body(mensaje);
-			}else {
-			ExpedientesModel expedienteCompleto = expedienteCodigo.get();
-			DocumentosModel nuevodocumento = new DocumentosModel(ruta, tarifa, categoria, expedienteCompleto);
-			DocumentosModel guardardocumento = documentoService.CreateYUpdateDocumentos(nuevodocumento);
-			return ResponseEntity.ok(guardardocumento);
-			
-			}
-		}
-	}
-	
-			//Puedes modificar el activo
-	
+
 	@PostMapping("/insertar/{ruta}/{tarifa}/{categoria}/{expediente}/{activo}")
 	public ResponseEntity<?> createTiposdocumento
-	(@RequestParam("ruta") String ruta, @PathVariable float tarifa, @PathVariable String categoria, @PathVariable String expediente, @PathVariable int activo) {
+	(@RequestParam("ruta") String ruta, @PathVariable float tarifa, @PathVariable String categoria, @PathVariable String expediente, @RequestParam(required = false) Integer activo) {
 		
 		Optional<DocumentosModel> documento = documentoService.findByRuta(ruta);
 		if (documento.isPresent()) {
@@ -111,70 +76,46 @@ public class DocumentosController {
 				String mensaje = "No existe un expediente con codigo: " + expediente;
 				return ResponseEntity.status(HttpStatus.NOT_FOUND).body(mensaje);
 			}else {
-			ExpedientesModel expedienteCompleto = expedienteCodigo.get();
-			DocumentosModel nuevodocumento = new DocumentosModel(ruta, tarifa, categoria, expedienteCompleto, activo);
-			DocumentosModel guardardocumento = documentoService.CreateYUpdateDocumentos(nuevodocumento);
-			return ResponseEntity.ok(guardardocumento);
-			
+				if (activo == null) activo = 1;
+
+				ExpedientesModel expedienteCompleto = expedienteCodigo.get();
+				DocumentosModel nuevodocumento = new DocumentosModel(ruta, tarifa, categoria, expedienteCompleto, activo);
+				DocumentosModel guardardocumento = documentoService.CreateYUpdateDocumentos(nuevodocumento);
+				return ResponseEntity.ok(guardardocumento);
+				
 			}
 		}
 	}
 	
 	
 	//Update
-	
-			//Solo ruta (Activo valor predeterminado 1)
-	
-	@PutMapping("/actualizar/{ruta}/{rutaNueva}/{tarifa}/{categoria}/{expediente}")
-	public ResponseEntity<?> actualizarTiposdocumento
-	(@RequestParam("ruta") String ruta,@RequestParam("rutaNueva") String rutaNueva, @PathVariable float tarifa, @PathVariable String categoria, @PathVariable String expediente) {
-				
-		Optional<DocumentosModel> documento = documentoService.findByRuta(ruta);
-		Optional<DocumentosModel> documentoNuevo = documentoService.findByRuta(rutaNueva);
-		
-		if (documento.isPresent() && !documentoNuevo.isPresent()) {
-			
-			Optional<ExpedientesModel> expedienteCodigo = expedienteService.findByCodigo(expediente);
-			if (!expedienteCodigo.isPresent()) {
-				String mensaje = "No existe un expediente con codigo: " + expediente;
-				return ResponseEntity.status(HttpStatus.NOT_FOUND).body(mensaje);
-				}else {
-					ExpedientesModel expedienteCompleto = expedienteCodigo.get();
-					DocumentosModel documentoActualizado = documento.get();
-					documentoActualizado.setRuta(rutaNueva);
-					documentoActualizado.setTarifa(tarifa);
-					documentoActualizado.setCategoria(categoria);
-					documentoActualizado.setExpediente(expedienteCompleto);
-					DocumentosModel guardardocumento = documentoService.CreateYUpdateDocumentos(documentoActualizado);
-					return ResponseEntity.ok(guardardocumento);
-			}
-		}else if (!documento.isPresent()){
-			String mensaje = "No existe un documento con la siguiente ruta: " + ruta;
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(mensaje);
-			
-			}else{
-				String mensaje = "Ya existe un documento con la siguiente ruta: " + rutaNueva;
-				return ResponseEntity.status(HttpStatus.NOT_FOUND).body(mensaje);
-			}
-		}
-	
-	
-	
-			//Puedes modificar la ruta junto con el activo
+
 	@PutMapping("/actualizar/{ruta}/{rutaNueva}/{tarifa}/{categoria}/{expediente}/{activo}")
 	public ResponseEntity<?> actualizarTiposdocumento
-	(@RequestParam("ruta") String ruta,@RequestParam("rutaNueva") String rutaNueva, @PathVariable float tarifa, @PathVariable String categoria, @PathVariable String expediente, @PathVariable int activo) {
+	(@RequestParam("ruta") String ruta,@RequestParam("rutaNueva") String rutaNueva, @PathVariable float tarifa, @PathVariable String categoria, @PathVariable String expediente, @RequestParam(required = false) Integer activo) {
 				
 		Optional<DocumentosModel> documento = documentoService.findByRuta(ruta);
 		Optional<DocumentosModel> documentoNuevo = documentoService.findByRuta(rutaNueva);
+		int documentoDatos;
+		int documentoNuevoDatos;
 		
-		if (documento.isPresent() && !documentoNuevo.isPresent()) {
+		if (documento.isPresent() && documentoNuevo.isPresent()) {
+			documentoDatos = documento.get().getId();
+			documentoNuevoDatos = documentoNuevo.get().getId();
+		}else {
+			documentoDatos = documento.map(DocumentosModel::getId).orElse(0); // Asigna 0 si el expediente está vacío
+		    documentoNuevoDatos = documentoNuevo.map(DocumentosModel::getId).orElse(1); // Asigna 1 si el expedienteNuevo está vacío
+		}
+		if (documento.isPresent() && !documentoNuevo.isPresent() ||
+				documentoDatos == documentoNuevoDatos) {
 			
 			Optional<ExpedientesModel> expedienteCodigo = expedienteService.findByCodigo(expediente);
 			if (!expedienteCodigo.isPresent()) {
 				String mensaje = "No existe un expediente con codigo: " + expediente;
 				return ResponseEntity.status(HttpStatus.NOT_FOUND).body(mensaje);
 				}else {
+					if (activo == null) activo = 1;
+					
 					ExpedientesModel expedienteCompleto = expedienteCodigo.get();
 					DocumentosModel documentoActualizado = documento.get();
 					documentoActualizado.setRuta(rutaNueva);
@@ -234,5 +175,99 @@ public class DocumentosController {
 			}
 		}
 	
+		// --------------------------------------------------------------	
+		
+		// ESTA PARTE ES SOLO PARA QUE FUNCIONE EL ANGULAR YA QUE NO NOS PERMITE USAR PUT/DELETE TENMOS QUE USAR POST	
+					
+		// --------------------------------------------------------------
+		
+		
+		//Update
+
+		@PostMapping("/actualizar/{ruta}/{rutaNueva}/{tarifa}/{categoria}/{expediente}/{activo}")
+		public ResponseEntity<?> actualizarTiposdocumentoPOST
+		(@RequestParam("ruta") String ruta,@RequestParam("rutaNueva") String rutaNueva, @PathVariable float tarifa, @PathVariable String categoria, @PathVariable String expediente, @RequestParam(required = false) Integer activo) {
+					
+			Optional<DocumentosModel> documento = documentoService.findByRuta(ruta);
+			Optional<DocumentosModel> documentoNuevo = documentoService.findByRuta(rutaNueva);
+			int documentoDatos;
+			int documentoNuevoDatos;
+			
+			if (documento.isPresent() && documentoNuevo.isPresent()) {
+				documentoDatos = documento.get().getId();
+				documentoNuevoDatos = documentoNuevo.get().getId();
+			}else {
+				documentoDatos = documento.map(DocumentosModel::getId).orElse(0); // Asigna 0 si el expediente está vacío
+			    documentoNuevoDatos = documentoNuevo.map(DocumentosModel::getId).orElse(1); // Asigna 1 si el expedienteNuevo está vacío
+			}
+			if (documento.isPresent() && !documentoNuevo.isPresent() ||
+					documentoDatos == documentoNuevoDatos) {
+				
+				Optional<ExpedientesModel> expedienteCodigo = expedienteService.findByCodigo(expediente);
+				if (!expedienteCodigo.isPresent()) {
+					String mensaje = "No existe un expediente con codigo: " + expediente;
+					return ResponseEntity.status(HttpStatus.NOT_FOUND).body(mensaje);
+					}else {
+						if (activo == null) activo = 1;
+						
+						ExpedientesModel expedienteCompleto = expedienteCodigo.get();
+						DocumentosModel documentoActualizado = documento.get();
+						documentoActualizado.setRuta(rutaNueva);
+						documentoActualizado.setTarifa(tarifa);
+						documentoActualizado.setCategoria(categoria);
+						documentoActualizado.setActivo(activo);
+						documentoActualizado.setExpediente(expedienteCompleto);
+						DocumentosModel guardardocumento = documentoService.CreateYUpdateDocumentos(documentoActualizado);
+						return ResponseEntity.ok(guardardocumento);
+				}
+			}else if (!documento.isPresent()){
+				String mensaje = "No existe un documento con la siguiente ruta: " + ruta;
+				return ResponseEntity.status(HttpStatus.NOT_FOUND).body(mensaje);
+				
+				}else{
+					String mensaje = "Ya existe un documento con la siguiente ruta: " + rutaNueva;
+					return ResponseEntity.status(HttpStatus.NOT_FOUND).body(mensaje);
+				}
+			}
+		
+		
+		
+		
+		//Borrado 
+				
+		
+			//Borrado Logico
+		
+			@PostMapping("/borrarlogico/{ruta}")
+			public ResponseEntity<?> borradoLogicoTiposDocumentoPOST(@RequestParam("ruta") String ruta) {
+				Optional<DocumentosModel> documento = documentoService.findByRuta(ruta);
+				
+				if (documento.isPresent()) {
+					
+					DocumentosModel documentoBorrarLogico = documento.get();
+					documentoBorrarLogico.setActivo(0);
+					DocumentosModel guardardocumento = documentoService.CreateYUpdateDocumentos(documentoBorrarLogico);
+					return ResponseEntity.ok(guardardocumento);
+					
+				}else{
+					String mensaje = "No existe un documento con ruta: " + ruta;
+					return ResponseEntity.status(HttpStatus.NOT_FOUND).body(mensaje);
+				}
+			}
+			
+			//Borrado Fisico NO ES RECOMENDADO USARLO PARA ESTO, BORRARA TODO LO RELACIONADO QUE TENGA
+			
+			@PostMapping("/borradofisico/{ruta}")
+			public ResponseEntity<?> borradoFisicoTiposdocumentoPOST(@RequestParam("ruta") String ruta){
+				Optional<DocumentosModel> documento = documentoService.findByRuta(ruta);
+				
+				if (documento.isPresent()) {
+					documentoService.DeleteDocumentos(ruta);
+					return ResponseEntity.ok("Documento borrado");
+				} else {
+					return ResponseEntity.ok("No existe ningún documento con ruta: " + ruta);
+				}
+			}
+		
 }
 
