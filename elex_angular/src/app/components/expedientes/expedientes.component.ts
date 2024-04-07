@@ -40,7 +40,7 @@ export class ExpedientesComponent {
   anadir = false;
   codigoConsultar = "";
   materiaNueva = "";
-  materiaAnadir = "Judicial";
+  materiaAnadir = "";
   activoNuevo = 0;
 
   alternarAI = 1
@@ -138,8 +138,8 @@ export class ExpedientesComponent {
 
   insertarExpedientes(): void {
 
-    if (this.activo == 1)this.activo = 0;
-    else this.activo = 1;
+    if (this.activo)this.activo = 1;
+    else this.activo = 0;
     let nuevoTipo: Expedientes = {
       codigo: this.codigo,
       codigoNuevo: this.codigo,
@@ -155,7 +155,9 @@ export class ExpedientesComponent {
         materianueva: '',
         activo: 1
       },
+
       activo : this.activo
+    
     }
     
     this.ExpedientesService.insertarExpedientes(nuevoTipo, this.materiaAnadir).subscribe(result => {
@@ -166,7 +168,7 @@ export class ExpedientesComponent {
       }
     },
     error => {
-      console.error('Error al añadir tipos:', error);
+      console.error('Error al añadir expediente:', error);
       if (error instanceof HttpErrorResponse) {
         this.mensajeError = error.error; // Asignar el mensaje de error al atributo errorMsg
         this.mensaje = "";
@@ -180,6 +182,7 @@ export class ExpedientesComponent {
       this.form.resetForm(); // Restablecer el formulario a su estado inicial
     }
     this.anadir = false;
+    this.activo = 1;
   }
   
 
@@ -216,13 +219,15 @@ export class ExpedientesComponent {
     }
     this.ExpedientesService.actualizarExpedientes(nuevoTipo, this.materiaNueva ).subscribe(result => {
         if (result) {
-          this.mensaje = "Tipo Expediente: '" + codigo + "' se actualizó a: '" + codigoNuevo + "'"
+          if(codigo == codigoNuevo)this.mensaje = "Expediente: '" + codigo + "' se actualizó'"
+            else this.mensaje = "Expediente: '" + codigo + "' se actualizó a: '" + codigoNuevo + "'"
+          
           this.mensajeError = ""
           this.cargarTipos();
         }
       },
       error => {
-        console.error('Error al actualizar tipos:', error);
+        console.error('Error al actualizar expediente:', error);
         if (error instanceof HttpErrorResponse) {
           this.mensajeError = error.error; // Asignar el mensaje de error al atributo errorMsg
           this.mensaje = "";
@@ -237,7 +242,7 @@ export class ExpedientesComponent {
   activar(codigo: string): void {
     this.ExpedientesService.activarExpedientes(codigo).subscribe(result => {
         if (result) {
-          this.mensaje = "Tipo Expediente: '" + codigo + "' se activó"
+          this.mensaje = "Expediente: '" + codigo + "' se activó"
           this.mensajeError = ""
           this.cargarTipos();
         }
@@ -251,7 +256,7 @@ export class ExpedientesComponent {
   borrarLogicamenteExpedientes(codigo: string){
     this.ExpedientesService.borrarLogicamenteExpedientes(codigo).subscribe(result => {
       if (result) {
-        this.mensaje = "Tipo Expediente: '" + codigo + "' se desactivó"
+        this.mensaje = "Expediente: '" + codigo + "' se desactivó"
         this.mensajeError = ""
         this.cargarTipos();
       }
@@ -265,14 +270,14 @@ export class ExpedientesComponent {
   borrarFisicamenteExpedientes(codigo: string){
     this.ExpedientesService.borrarFisicamenteExpedientes(codigo).subscribe(result => {
       if (result) {
-        this.mensaje = "Tipo Expediente: '" + codigo + "' se eliminó"
+        this.mensaje = "Expediente: '" + codigo + "' se eliminó"
         this.mensajeError = ""
         this.cargarTipos();
       }
     },
     (error) => {
       console.error('Error al actualizar tipos:', error);
-      this.mensaje = "Tipo Expediente: '" + codigo + "' se eliminó"
+      this.mensaje = "Expediente: '" + codigo + "' se eliminó"
         this.mensajeError = ""
         this.cargarTipos();
     }

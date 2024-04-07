@@ -20,6 +20,8 @@ import com.soltel.elex.models.ExpedientesModel;
 import com.soltel.elex.services.ActuacionesService;
 import com.soltel.elex.services.ExpedientesService;
 
+import io.swagger.v3.oas.annotations.Hidden;
+
 @RestController
 @RequestMapping("/actuaciones")
 public class ActuacionesController {
@@ -75,7 +77,7 @@ public class ActuacionesController {
 	
 	@PostMapping("/insertar/{descripcion}/{finalizado}/{modalidad}/{fecha}/{expediente}/{activo}")
 	public ResponseEntity<?> CreateActuacion
-	(@PathVariable String descripcion, @PathVariable int finalizado, @PathVariable LocalDate fecha,@PathVariable String modalidad, @PathVariable String expediente, @RequestParam(required = false) Integer activo) {
+	(@PathVariable String descripcion, @PathVariable int finalizado, @PathVariable LocalDate fecha,@PathVariable String modalidad, @PathVariable String expediente, @PathVariable int activo) {
 		
 		
 		Optional<ExpedientesModel> expedienteCodigo = expedienteService.findByCodigo(expediente);
@@ -89,8 +91,6 @@ public class ActuacionesController {
 		        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(mensaje);
 		        
 				} else {
-					if (activo == null) activo = 1;
-
 						ActuacionesModel nuevaActuacion = new ActuacionesModel(descripcion, finalizado, modalidad, fecha, expedienteCompleto, activo);							
 						ActuacionesModel guardaractuacion = actuacionService.CreateYUpdateActuaciones(nuevaActuacion);
 						return ResponseEntity.ok(guardaractuacion);
@@ -109,7 +109,7 @@ public class ActuacionesController {
 	public ResponseEntity<?> UpdateActuaciones
 	(@PathVariable String descripcion, @PathVariable String descripcionNueva, @PathVariable String expediente,
 	@PathVariable String expedienteNuevo,@PathVariable int finalizado, @PathVariable LocalDate fecha,
-	@PathVariable String modalidad, @RequestParam(required = false) Integer activo) {
+	@PathVariable String modalidad, @PathVariable int activo) {
 		Optional<ExpedientesModel> expedienteCodigo = expedienteService.findByCodigo(expediente);
 		Optional<ExpedientesModel> expedienteCodigoNuevo = expedienteService.findByCodigo(expedienteNuevo);
 		
@@ -133,9 +133,6 @@ public class ActuacionesController {
 					actuacionDatos == actuacionNuevaDatos) {
 				
 					ActuacionesModel actuacionActualizado = actuacion.get();
-					
-					if (activo == null) activo = 1;
-
 					
 					actuacionActualizado.setDescripcion(descripcionNueva);
 					actuacionActualizado.setExpediente(expedienteCompletoNuevo);
@@ -223,6 +220,32 @@ public class ActuacionesController {
 		}
 
 		
+		@PutMapping("/activar/{descripcion}/{expediente}")
+		public ResponseEntity<?> activarActuaciones(@PathVariable String descripcion, @PathVariable String expediente) {
+			
+			Optional<ExpedientesModel> expedienteCodigo = expedienteService.findByCodigo(expediente);
+			
+			if (expedienteCodigo.isPresent()) {
+				ExpedientesModel expedienteCompleto = expedienteCodigo.get();
+				Optional<ActuacionesModel> actuacion = actuacionService.findByDescripcionAndExpediente(descripcion, expedienteCompleto);
+			
+				if (actuacion.isPresent()) {
+				
+					ActuacionesModel actuacionBorrarLogico = actuacion.get();
+					actuacionBorrarLogico.setActivo(1);
+					ActuacionesModel guardaractuacion = actuacionService.CreateYUpdateActuaciones(actuacionBorrarLogico);
+					return ResponseEntity.ok(guardaractuacion);
+				
+				}else{
+					String mensaje = "No existe una actuacion con descripcion: '" + descripcion + "' y expediente: " + expediente;
+					return ResponseEntity.status(HttpStatus.NOT_FOUND).body(mensaje);
+				}
+			}else {
+				String mensaje = "No existe un expediente: " + expediente;
+				return ResponseEntity.status(HttpStatus.NOT_FOUND).body(mensaje);
+			}
+		}
+		
 		// --------------------------------------------------------------	
 		
 		// ESTA PARTE ES SOLO PARA QUE FUNCIONE EL ANGULAR YA QUE NO NOS PERMITE USAR PUT/DELETE TENMOS QUE USAR POST	
@@ -230,12 +253,12 @@ public class ActuacionesController {
 		// --------------------------------------------------------------
 		
 		//Update
-		
+		@Hidden
 		@PostMapping("/actualizar/{descripcion}/{descripcionNueva}/{expediente}/{expedienteNuevo}/{finalizado}/{modalidad}/{fecha}/{activo}")
 		public ResponseEntity<?> UpdateActuacionesPOST
 		(@PathVariable String descripcion, @PathVariable String descripcionNueva, @PathVariable String expediente,
 		@PathVariable String expedienteNuevo,@PathVariable int finalizado, @PathVariable LocalDate fecha,
-		@PathVariable String modalidad, @RequestParam(required = false) Integer activo) {
+		@PathVariable String modalidad,@PathVariable int activo) {
 			Optional<ExpedientesModel> expedienteCodigo = expedienteService.findByCodigo(expediente);
 			Optional<ExpedientesModel> expedienteCodigoNuevo = expedienteService.findByCodigo(expedienteNuevo);
 			
@@ -260,13 +283,11 @@ public class ActuacionesController {
 					
 						ActuacionesModel actuacionActualizado = actuacion.get();
 						
-						if (activo == null) activo = 1;
-
-						
 						actuacionActualizado.setDescripcion(descripcionNueva);
 						actuacionActualizado.setExpediente(expedienteCompletoNuevo);
 						actuacionActualizado.setFinalizado(finalizado);
 						actuacionActualizado.setModalidad(modalidad);
+						actuacionActualizado.setFecha(fecha);
 						actuacionActualizado.setActivo(activo);
 						actuacionActualizado.setExpediente(expedienteCompletoNuevo);
 						ActuacionesModel guardaractuacion = actuacionService.CreateYUpdateActuaciones(actuacionActualizado);
@@ -289,7 +310,7 @@ public class ActuacionesController {
 			}
 		}
 
-
+		
 		
 		
 		
@@ -299,7 +320,7 @@ public class ActuacionesController {
 				
 		
 			//Borrado Logico
-		
+		@Hidden
 			@PostMapping("/borrarlogico/{descripcion}/{expediente}")
 			public ResponseEntity<?> borradoLogicoActuacionPOST(@PathVariable String descripcion, @PathVariable String expediente) {
 				
@@ -325,9 +346,34 @@ public class ActuacionesController {
 					return ResponseEntity.status(HttpStatus.NOT_FOUND).body(mensaje);
 				}
 			}
+		@Hidden
+		@PostMapping("/activar/{descripcion}/{expediente}")
+		public ResponseEntity<?> activarActuacionesPOST(@PathVariable String descripcion, @PathVariable String expediente) {
 			
+			Optional<ExpedientesModel> expedienteCodigo = expedienteService.findByCodigo(expediente);
+			
+			if (expedienteCodigo.isPresent()) {
+				ExpedientesModel expedienteCompleto = expedienteCodigo.get();
+				Optional<ActuacionesModel> actuacion = actuacionService.findByDescripcionAndExpediente(descripcion, expedienteCompleto);
+			
+				if (actuacion.isPresent()) {
+				
+					ActuacionesModel actuacionBorrarLogico = actuacion.get();
+					actuacionBorrarLogico.setActivo(1);
+					ActuacionesModel guardaractuacion = actuacionService.CreateYUpdateActuaciones(actuacionBorrarLogico);
+					return ResponseEntity.ok(guardaractuacion);
+				
+				}else{
+					String mensaje = "No existe una actuacion con descripcion: '" + descripcion + "' y expediente: " + expediente;
+					return ResponseEntity.status(HttpStatus.NOT_FOUND).body(mensaje);
+				}
+			}else {
+				String mensaje = "No existe un expediente: " + expediente;
+				return ResponseEntity.status(HttpStatus.NOT_FOUND).body(mensaje);
+			}
+		}
 			//Borrado Fisico NO ES RECOMENDADO USARLO PARA ESTO, BORRARA TODO LO RELACIONADO QUE TENGA
-			
+		@Hidden
 			@PostMapping("/borrarfisico/{descripcion}/{expediente}")
 			public ResponseEntity<?> borradoFisicoActuacionPOST(@PathVariable String descripcion, @PathVariable String expediente){
 				

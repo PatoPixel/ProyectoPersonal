@@ -70,7 +70,7 @@ public class ExpedientesController {
 	@PostMapping("/insertar/{Codigo}/{fecha}/{situacion}/{opciones}/{descripcion}/{prioridad}/{ubicacion}/{materia}/{activo}")
 	public ResponseEntity<?> createTiposExpediente
 	(@PathVariable String Codigo, @PathVariable LocalDate fecha, @PathVariable Situacion situacion, @PathVariable String opciones,
-	@PathVariable String descripcion, @PathVariable String prioridad, @PathVariable String ubicacion, @PathVariable String materia, @RequestParam(required = false) Integer activo) {
+	@PathVariable String descripcion, @PathVariable String prioridad, @PathVariable String ubicacion, @PathVariable String materia, @PathVariable int activo) {
 		
 		Optional<ExpedientesModel> expediente = expedienteService.findByCodigo(Codigo);
 		if (expediente.isPresent()) {
@@ -82,7 +82,6 @@ public class ExpedientesController {
 				String mensaje = "No existe un tipo de expediente con el nombre: " + materia;
 				return ResponseEntity.status(HttpStatus.NOT_FOUND).body(mensaje);
 			}else {
-				if (activo == null) activo = 1;
 				
 			TiposExpedienteModel tipo = tipoExpediente.get();
 			ExpedientesModel nuevoExpediente = new ExpedientesModel(Codigo, fecha, situacion, opciones, descripcion, prioridad, ubicacion.replace("_", "/"), tipo, activo);
@@ -99,7 +98,7 @@ public class ExpedientesController {
 	@PutMapping("/actualizar/{Codigo}/{CodigoNuevo}/{fecha}/{situacion}/{opciones}/{descripcion}/{prioridad}/{ubicacion}/{materia}/{activo}")
 	public ResponseEntity<?> actualizarTiposExpedienteActivo
 	(@PathVariable String Codigo, @PathVariable String CodigoNuevo, @PathVariable LocalDate fecha, @PathVariable Situacion situacion, @PathVariable String opciones,
-	@PathVariable String descripcion, @PathVariable String prioridad, @PathVariable String ubicacion, @PathVariable String materia, @RequestParam(required = false) Integer activo) {
+	@PathVariable String descripcion, @PathVariable String prioridad, @PathVariable String ubicacion, @PathVariable String materia, @PathVariable int activo) {
 				
 		Optional<ExpedientesModel> expediente = expedienteService.findByCodigo(Codigo);
 		Optional<ExpedientesModel> expedienteNuevo = expedienteService.findByCodigo(CodigoNuevo);
@@ -123,7 +122,6 @@ public class ExpedientesController {
 				String mensaje = "No existe un tipo de expediente con el nombre: " + materia;
 				return ResponseEntity.status(HttpStatus.NOT_FOUND).body(mensaje);
 				}else {
-					if (activo == null) activo = 1;
 					
 					TiposExpedienteModel tipo = tipoExpediente.get();
 					ExpedientesModel expedienteActualizado = expediente.get();
@@ -217,7 +215,7 @@ public class ExpedientesController {
 		@PostMapping("/actualizar/{Codigo}/{CodigoNuevo}/{fecha}/{situacion}/{opciones}/{descripcion}/{prioridad}/{ubicacion}/{materia}/{activo}")
 		public ResponseEntity<?> actualizarTiposExpedienteActivoPOST
 		(@PathVariable String Codigo, @PathVariable String CodigoNuevo, @PathVariable LocalDate fecha, @PathVariable Situacion situacion, @PathVariable String opciones,
-		@PathVariable String descripcion, @PathVariable String prioridad, @PathVariable String ubicacion, @PathVariable String materia, @RequestParam(required = false) Integer activo) {
+		@PathVariable String descripcion, @PathVariable String prioridad, @PathVariable String ubicacion, @PathVariable String materia, @PathVariable int activo) {
 					
 			Optional<ExpedientesModel> expediente = expedienteService.findByCodigo(Codigo);
 			Optional<ExpedientesModel> expedienteNuevo = expedienteService.findByCodigo(CodigoNuevo);
@@ -241,7 +239,6 @@ public class ExpedientesController {
 					String mensaje = "No existe un tipo de expediente con el nombre: " + materia;
 					return ResponseEntity.status(HttpStatus.NOT_FOUND).body(mensaje);
 					}else {
-						if (activo == null) activo = 1;
 						
 						TiposExpedienteModel tipo = tipoExpediente.get();
 						ExpedientesModel expedienteActualizado = expediente.get();

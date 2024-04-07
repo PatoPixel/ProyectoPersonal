@@ -1,3 +1,4 @@
+
 <app-header></app-header>
 <body>
 	<div class="example-wrapper">
@@ -11,7 +12,7 @@
 				<br/>
 				<label for="activoInput" class="form-label">¿Quiere añadirlo activado?</label>
 				<section class="form-check">
-					<input type="checkbox" class="form-check-input" id="activo" name="activo" [(ngModel)]="activo" value="0"/>
+					<input type="checkbox" class="form-check-input" id="activo" name="activo" [(ngModel)]="activo"/>
 				</section>
 			</div>
 			<button type="submit" class="btn btn-primary m-1" [disabled]="!form.valid">
@@ -125,7 +126,7 @@
 											                      actualizarTiposExpediente(
 											                        tipo.materia,
 											                        materiaNueva,
-											                        activo
+											                        tipo.activo
 											                      )
 											                    " class="btn btn-primary m-1">
 											Actualizar

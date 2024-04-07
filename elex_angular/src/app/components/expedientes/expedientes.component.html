@@ -1,5 +1,3 @@
-  
-
 <app-header></app-header>
 <body>
 	<div class="example-wrapper">
@@ -21,47 +19,44 @@
 					<div class="col-md-3">
 						<label for="situacionInput" class="form-label">Situacion</label>
 						<select [(ngModel)]="situacion" class="form-select" name="situacion">
-										<option [ngValue]="'Pendiente'">Pendiente</option>
-										<option [ngValue]="'Enviado'">Enviado</option>
-										<option [ngValue]="'En_Proceso'">En Proceso</option>
-										<option [ngValue]="'En_Espera_De_Juicio'">En Espera de Juicio</option>
-										<option [ngValue]="'Resuelto'">Resuelto</option>
-										<option [ngValue]="'Apelacion'">Apelación</option>
-										<option [ngValue]="'Cerrado'">Cerrado</option>
-									</select>
+							<option [ngValue]="'Pendiente'">Pendiente</option>
+							<option [ngValue]="'Enviado'">Enviado</option>
+							<option [ngValue]="'En_Proceso'">En Proceso</option>
+							<option [ngValue]="'En_Espera_De_Juicio'">En Espera de Juicio</option>
+							<option [ngValue]="'Resuelto'">Resuelto</option>
+							<option [ngValue]="'Apelacion'">Apelación</option>
+							<option [ngValue]="'Cerrado'">Cerrado</option>
+						</select>
 						<label for="opcionesInput" class="form-label">Opciones</label>
 						<input type="text" name="opciones" id="opcionesnInput" class="form-control" [(ngModel)]="opciones" required/>
 					</div>
 
-          <div class="col-md-3">
+					<div class="col-md-3">
 						<label for="descripcionInput" class="form-label">Descripcion</label>
 						<input type="text" name="descripcion" id="descripcionInput" class="form-control" [(ngModel)]="descripcion" required/>
 
 						<label for="prioridadInput" class="form-label">Prioridad</label>
 						<select [(ngModel)]="prioridad" class="form-select" name="prioridad">
-										<option>Baja</option>
-										<option>Media</option>
-										<option>Alta</option>
+							<option>Baja</option>
+							<option>Media</option>
+							<option>Alta</option>
 						</select>
 					</div>
 
-          <div class="col-md-3">
+					<div class="col-md-3">
 						<label for="ubicacionInput" class="form-label">Ubicación</label>
 						<input type="text" name="ubicacion" id="ubicacionInput" class="form-control" [(ngModel)]="ubicacion" required/>
 
 						<label for="materiaInput" class="form-label">Materia</label>
 						<select [(ngModel)]="materiaAnadir" class="form-select" name="materiaAnadir">
-										<option *ngFor="let tipo of tipoExpedienteBuscar" [value]="tipo.materia">
-											{{ tipo.materia }}
-										</option>
+							<option *ngFor="let tipo of tipoExpedienteBuscar" [value]="tipo.materia">
+								{{ tipo.materia }}
+							</option>
 						</select>
 					</div>
-  
 					<div class="col-md-3">
 						<label for="activoInput" class="form-label">¿Quiere añadirlo activado?</label>
-						<section class="form-check">
-							<input type="checkbox" class="form-check-input" id="activo" name="activo" [(ngModel)]="activo" value="0"/>
-						</section>
+							<input type="checkbox" class="form-check-input" id="activo" name="activo" [(ngModel)]="activo"/>
 					</div>
 
 				</div>
@@ -221,19 +216,19 @@
 
 								<td>
 									<button type="submit" (click)="
-										                      actualizarTiposExpediente(
-										                        tipo.codigo,
-										                        codigoNuevo,
-										                        fecha,
-										                        situacion,
-										                        opciones,
-										                        descripcion,
-										                        prioridad,
-										                        ubicacion,
-										                        tipoExpdiente[0],
-										                        tipo.activo
-										                      )
-										                    " class="btn btn-primary m-1">
+																				                      actualizarTiposExpediente(
+																				                        tipo.codigo,
+																				                        codigoNuevo,
+																				                        fecha,
+																				                        situacion,
+																				                        opciones,
+																				                        descripcion,
+																				                        prioridad,
+																				                        ubicacion,
+																				                        tipoExpdiente[0],
+																				                        tipo.activo
+																				                      )
+																				                    " class="btn btn-primary m-1">
 										Actualizar
 									</button>
 									<button class="btn btn-outline-dark m-1" (click)="cancelarTipo()">

@@ -60,14 +60,13 @@ public class TiposExpedienteController {
 	// Insertar  
 	
 	@PostMapping("/insertar/{materia}/{activo}")
-	public ResponseEntity<?> createTiposExpedienteActivo(@PathVariable String materia, @RequestParam(required = false) Integer activo) {
+	public ResponseEntity<?> createTiposExpedienteActivo(@PathVariable String materia, @PathVariable int activo) {
 		Optional<TiposExpedienteModel> tipoExpediente = tiposService.findByMateria(materia);
 		if (tipoExpediente.isPresent()) {
 			String mensaje = "Ya existe un tipo de expediente con el nombre: " + materia;
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(mensaje);
 		}else {
-			if (activo == null) activo = 1;
-			
+
 			TiposExpedienteModel nuevoTipo = new TiposExpedienteModel(materia, activo);
 			TiposExpedienteModel guardarTipo = tiposService.CreateYUpdateTiposExpediente(nuevoTipo);
 			return ResponseEntity.ok(guardarTipo);
@@ -78,7 +77,7 @@ public class TiposExpedienteController {
 	//Update
 	
 	@PutMapping("/actualizar/{materia}/{materiaNueva}/{activo}")
-	public ResponseEntity<?> actualizarTiposExpediente(@PathVariable String materia, @PathVariable String materiaNueva, @RequestParam(required = false) Integer activo) {
+	public ResponseEntity<?> actualizarTiposExpediente(@PathVariable String materia, @PathVariable String materiaNueva, @PathVariable int activo) {
 		Optional<TiposExpedienteModel> tipoExpediente = tiposService.findByMateria(materia);
 		Optional<TiposExpedienteModel> tipoExpedienteNuevo = tiposService.findByMateria(materiaNueva);
 		int tipoExpedienteDatos;
@@ -95,9 +94,7 @@ public class TiposExpedienteController {
 		
 		if (tipoExpediente.isPresent() && !tipoExpedienteNuevo.isPresent() || 
 				tipoExpedienteDatos == tipoExpedienteNuevoDatos) {
-			
-			if (activo == null) activo = 1;
-			
+	
 			TiposExpedienteModel tipoExpedienteActualizado = tipoExpediente.get();
 			tipoExpedienteActualizado.setMateria(materiaNueva);
 			tipoExpedienteActualizado.setActivo(activo);
@@ -178,7 +175,7 @@ public class TiposExpedienteController {
 		
 		@Hidden
 		@PostMapping("/actualizar/{materia}/{materiaNueva}/{activo}")
-		public ResponseEntity<?> actualizarTiposExpedientePOST(@PathVariable String materia, @PathVariable String materiaNueva, @RequestParam(required = false) Integer activo) {
+		public ResponseEntity<?> actualizarTiposExpedientePOST(@PathVariable String materia, @PathVariable String materiaNueva, @PathVariable int activo) {
 			Optional<TiposExpedienteModel> tipoExpediente = tiposService.findByMateria(materia);
 			Optional<TiposExpedienteModel> tipoExpedienteNuevo = tiposService.findByMateria(materiaNueva);
 			int tipoExpedienteDatos;
@@ -195,8 +192,6 @@ public class TiposExpedienteController {
 			
 			if (tipoExpediente.isPresent() && !tipoExpedienteNuevo.isPresent() || 
 					tipoExpedienteDatos == tipoExpedienteNuevoDatos) {
-				
-				if (activo == null) activo = 1;
 				
 				TiposExpedienteModel tipoExpedienteActualizado = tipoExpediente.get();
 				tipoExpedienteActualizado.setMateria(materiaNueva);

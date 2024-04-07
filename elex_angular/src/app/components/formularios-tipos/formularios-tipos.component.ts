@@ -1,7 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { Tiposexpediente } from '../../models/tiposexpediente.model';
 import { TiposexpedienteService } from '../../services/tiposexpediente.service';
 import { HttpErrorResponse } from '@angular/common/http';
+import { NgForm } from '@angular/forms';
 @Component({
   selector: 'app-formularios-tipos',
   //standalone: true,
@@ -32,7 +33,7 @@ export class FormulariosTiposComponent implements OnInit{
   alternarAI = 1
   mostrarActivosInactivos = 1
   mensajeActivos = "Activos"
-  
+  @ViewChild('form', { static: false }) form: NgForm | undefined;
   
 
   //Al arrancar la aplicacion
@@ -94,8 +95,8 @@ export class FormulariosTiposComponent implements OnInit{
 
   insertarTiposExpediente(): void {
 
-    if (this.activo == 1)this.activo = 0;
-    else this.activo = 1;
+    if (this.activo)this.activo = 1;
+    else this.activo = 0;
     let nuevoTipo: Tiposexpediente = {
       materia: this.materia,
       activo: this.activo,
@@ -119,8 +120,11 @@ export class FormulariosTiposComponent implements OnInit{
       }
     }
   );
-      
+  if (this.form) {
+    this.form.resetForm(); // Restablecer el formulario a su estado inicial
+  }
     this.anadir = false;
+    this.activo = 1;
   }
 
   cargarTipos2(materia: string): void {
@@ -134,7 +138,6 @@ export class FormulariosTiposComponent implements OnInit{
     })
     this.mostrarAI()
     this.mensajeActivos=""
-    
   }
   
   actualizarTiposExpediente(materia: string,materiaNueva: string, activo: number): void {
@@ -146,7 +149,9 @@ export class FormulariosTiposComponent implements OnInit{
     }
     this.TiposExpedienteService.actualizarTipos(nuevoTipo).subscribe(result => {
         if (result) {
-          this.mensaje = "Tipo Expediente: '" + materia + "' se actualizó a: '" + materiaNueva + "'"
+          if (materia == materiaNueva)this.mensaje = ""
+          else this.mensaje = "Tipo Expediente: '" + materia + "' se actualizó a: '" + materiaNueva + "'"
+          
           this.mensajeError = ""
           this.cargarTipos();
         }
