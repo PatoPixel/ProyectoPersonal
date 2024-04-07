@@ -1,244 +1,170 @@
 <app-header></app-header>
 <body>
-  <div class="example-wrapper">
-  <h1 >TABLA TIPOS EXPEDIENTE</h1>
-  <br>
-  <!-- Formulario para añadir -->
-    <form
-      (ngSubmit)="insertarTiposExpediente()"
-      #form="ngForm"
-      class="container mt-4"
-      *ngIf="anadir"
-    >
-      <div>
-        <label for="materiaInput" class="form-label">Materia</label>
-        <input
-          type="text"
-          name="materia"
-          id="materiaInput"
-          class="form-control"
-          [(ngModel)]="materia"
-          required
-        />
-        <br />
-        <label for="activoInput" class="form-label"
-          >¿Quiere añadirlo activado?</label
-        >
-        <section class="form-check">
-          <input
-            type="checkbox"
-            class="form-check-input"
-            id="activo"
-            name="activo"
-            [(ngModel)]="activo"
-            value="0"
-          />
-        </section>
-      </div>
-      <button
-        type="submit"
-        class="btn btn-primary m-1"
-        [disabled]="!form.valid"
-      >
-        Añadir
-      </button>
-      <button
-        type="submit"
-        class="btn btn-outline-dark m-1"
-        (click)="anadirFormulario(false)"
-      >
-        Cancelar
-      </button>
-      <hr />
-    
-
-    </form>
-
-<!-- Mensajes -->
-    
-    <div *ngIf="mensaje" aria-label='success container'>
-      <p class="alert alert-success">
-        {{ mensaje }}
-      </p>
-    </div>
-
-    <div *ngIf="mensajeError" aria-label='success container'>
-      <p class="alert alert-danger">
-        {{ mensajeError }}
-      </p>
-    </div>
+	<div class="example-wrapper">
+		<h1>TABLA TIPOS EXPEDIENTE</h1>
+		<br>
+		<!-- Formulario para añadir -->
+		<form (ngSubmit)="insertarTiposExpediente()" #form="ngForm" class="container mt-4" *ngIf="anadir">
+			<div>
+				<label for="materiaInput" class="form-label">Materia</label>
+				<input type="text" name="materia" id="materiaInput" class="form-control" [(ngModel)]="materia" required/>
+				<br/>
+				<label for="activoInput" class="form-label">¿Quiere añadirlo activado?</label>
+				<section class="form-check">
+					<input type="checkbox" class="form-check-input" id="activo" name="activo" [(ngModel)]="activo" value="0"/>
+				</section>
+			</div>
+			<button type="submit" class="btn btn-primary m-1" [disabled]="!form.valid">
+				Añadir
+			</button>
+			<button type="submit" class="btn btn-outline-dark m-1" (click)="anadirFormulario(false)">
+				Cancelar
+			</button>
+			<hr/>
 
 
-<!--Boton para permitir ver el formulario de añadir -->
+		</form>
 
-    <section class="example-wrapper">
-      <div class="d-flex justify-content-center" *ngIf="!anadir">
-        <button
-          class="btn btn-primary ms-3 w-75"
-          (click)="anadirFormulario(true)"
-        >
-          Añadir
-        </button>
-      </div>
+		<!-- Mensajes -->
 
+		<div *ngIf="mensaje" aria-label='success container'>
+			<p class="alert alert-success">
+				{{ mensaje }}
+			</p>
+		</div>
 
-        <!-- Select para buscar por materia -->
-      
-      
-      <div>
-        <table class="example-wrapper">
-          <tr>
-            <td>
-              <select [(ngModel)]="materiaConsultar" class="form-select">
-                <option *ngFor="let tipo of tipoBuscar" [value]="tipo.materia">
-                  {{ tipo.materia }}
-                </option>
-              </select>
-            </td>
-            <td>
-              <button
-                (click)="cargarTipos2(materiaConsultar)"
-                class="btn btn-primary m-1"
-              >
-                Buscar
-              </button>
-            </td>
-            <td>
-              <button (click)="cargarTipos()" class="btn btn-primary m-1">
-                Ver Todos
-              </button>
-            </td>
-            <td>
-              <button (click)="alternarActivoInactivo()" class="btn btn-primary">
-                Alternar entre Activo/Inactivo
-              </button>
-            </td>
-            <td>
-              <button (click)="mostrarAI()" class="btn btn-primary">
-                Ver Inactivos y Activos
-              </button>
-            </td>
-        </tr>
-      </table>
-        <div *ngIf="mensajeActivos" aria-label='success container' class="w-25 justify-content-center">
-              <p class="alert alert-info">
-                {{ mensajeActivos }}
-              </p>
-        </div>
-        <!-- Funciones varias -->
-      </div>
-
-    
+		<div *ngIf="mensajeError" aria-label='success container'>
+			<p class="alert alert-danger">
+				{{ mensajeError }}
+			</p>
+		</div>
 
 
+		<!--Boton para permitir ver el formulario de añadir -->
 
-      <!-- Tabla donde se muestran los datos -->
+		<section class="example-wrapper">
+			<div class="d-flex justify-content-center" *ngIf="!anadir">
+				<button class="btn btn-primary ms-3 w-75" (click)="anadirFormulario(true)">
+					Añadir
+				</button>
+			</div>
 
 
+			<!-- Select para buscar por materia -->
 
-   <div style="max-height: 470px; overflow-y: auto;">
-      <table class="table mt-3 tabla example-wrapper">
-        <thead style="position: sticky; top: 0; z-index: 1; background-color: white;">
-          <tr>
-            <th scope="col">Materia</th>
-            <th scope="col">Activo</th>
-            <th scope="col">Funciones</th>
-          </tr>
-        </thead>
-        <tbody >
-          <tr *ngFor="let tipo of tipos">
-            <ng-container *ngIf="tipo.activo == alternarAI || tipo.activo == mostrarActivosInactivos">
 
-            <!-- Se crea algo parecido a un formulario, sirve para acutalizar los registros -->
+			<div>
+				<table class="example-wrapper">
+					<tr>
+						<td>
+							<select [(ngModel)]="materiaConsultar" class="form-select">
+								<option *ngFor="let tipo of tipoBuscar" [value]="tipo.materia">
+									{{ tipo.materia }}
+								</option>
+							</select>
+						</td>
+						<td>
+							<button (click)="cargarTipos2(materiaConsultar)" class="btn btn-primary m-1">
+								Buscar
+							</button>
+						</td>
+						<td>
+							<button (click)="cargarTipos()" class="btn btn-primary m-1">
+								Ver Todos
+							</button>
+						</td>
+						<td>
+							<button (click)="alternarActivoInactivo()" class="btn btn-primary">
+								Alternar entre Activo/Inactivo
+							</button>
+						</td>
+						<td>
+							<button (click)="mostrarAI()" class="btn btn-primary">
+								Ver Inactivos y Activos
+							</button>
+						</td>
+					</tr>
+				</table>
+				<div *ngIf="mensajeActivos" aria-label='success container' class="w-25 justify-content-center">
+					<p class="alert alert-info">
+						{{ mensajeActivos }}
+					</p>
+				</div>
+				<!-- Funciones varias -->
+			</div>
 
-              <ng-container
-                *ngIf="materiaSeleccionada == tipo.materia; else mostrarFila"
-              >
-                <td>
-                  <input
-                    type="text"
-                    name="materiaNueva"
-                    id="materiaInput"
-                    class="form-control"
-                    required
-                    [(ngModel)]="materiaNueva"
-                  />
-                </td>
-                <td>
-                  <input
-                    type="text"
-                    name="activo"
-                    id="activoInput"
-                    class="form-control"
-                    value="{{tipo.activo}}"
-                    disabled
-                  />
-                </td>
-                <td>
-                  <button
-                    type="submit"
-                    (click)="
-                      actualizarTiposExpediente(
-                        tipo.materia,
-                        materiaNueva,
-                        activo
-                      )
-                    "
-                    class="btn btn-primary m-1"
-                    
-                  >
-                    Actualizar
-                  </button>
-                  <button
-                    class="btn btn-outline-dark m-1"
-                    (click)="cancelarTipo()"
-                  >
-                    Cancelar
-                  </button>
-                </td>
-              </ng-container>
 
-            <!-- Datos sin poder editarse -->
+			<!-- Tabla donde se muestran los datos -->
 
-              <ng-template #mostrarFila>
-                <td class="w-40" style="padding: 15px 0px 0px 21px">
-                  {{ tipo.materia }}
-                </td>
-                <td class="w-25" style="padding: 15px 0px 0px 21px">
-                  {{ tipo.activo }}
-                </td>
-                <td>
-                  <button
-                    class="btn btn-outline-dark m-1"
-                    (click)="editarTipo(tipo.materia)"
-                  >
-                    Editar
-                  </button>
-                  <button *ngIf="tipo.activo == 1 "
-                    class="btn btn-outline-danger m-1"
-                    (click)="borrarLogicamenteTiposExpediente(tipo.materia)"
-                  >
-                    Desactivar
-                  </button>
-                  <button *ngIf="tipo.activo == 0 "
-                    class="btn btn-outline-danger m-1"
-                    (click)="activar(tipo.materia)"
-                  >
-                    Activar
-                  </button>
-                  <button
-                    class="btn btn-outline-danger m-1"
-                    (click)="borrarFisicamenteTiposExpediente(tipo.materia)"
-                  >
-                    Borrar
-                  </button>
-                </td>
-              </ng-template>
-            </ng-container>
-          </tr>
-        </tbody>
-      </table>
-      </div>
-    </section>
-  </div>
+
+			<div style="max-height: 470px; overflow-y: auto;">
+				<table class="table mt-3 tabla example-wrapper">
+					<thead style="position: sticky; top: 0; z-index: 1; background-color: white;">
+						<tr>
+							<th scope="col">Materia</th>
+							<th scope="col">Activo</th>
+							<th scope="col">Funciones</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr *ngFor="let tipo of tipos">
+							<ng-container
+								*ngIf="tipo.activo == alternarAI || tipo.activo == mostrarActivosInactivos">
+
+								<!-- Se crea algo parecido a un formulario, sirve para acutalizar los registros -->
+
+								<ng-container *ngIf="materiaSeleccionada == tipo.materia; else mostrarFila">
+									<td>
+										<input type="text" name="materiaNueva" id="materiaInput" class="form-control" required [(ngModel)]="materiaNueva"/>
+									</td>
+									<td>
+										<input type="text" name="activo" id="activoInput" class="form-control" value="{{tipo.activo}}" disabled/>
+									</td>
+									<td>
+										<button type="submit" (click)="
+											                      actualizarTiposExpediente(
+											                        tipo.materia,
+											                        materiaNueva,
+											                        activo
+											                      )
+											                    " class="btn btn-primary m-1">
+											Actualizar
+										</button>
+										<button class="btn btn-outline-dark m-1" (click)="cancelarTipo()">
+											Cancelar
+										</button>
+									</td>
+								</ng-container>
+
+								<!-- Datos sin poder editarse -->
+
+								<ng-template #mostrarFila>
+									<td class="w-40" style="padding: 15px 0px 0px 21px">
+										{{ tipo.materia }}
+									</td>
+									<td class="w-25" style="padding: 15px 0px 0px 21px">
+										{{ tipo.activo }}
+									</td>
+									<td>
+										<button class="btn btn-outline-dark m-1" (click)="editarTipo(tipo.materia)">
+											Editar
+										</button>
+										<button *ngIf="tipo.activo == 1 " class="btn btn-outline-danger m-1" (click)="borrarLogicamenteTiposExpediente(tipo.materia)">
+											Desactivar
+										</button>
+										<button *ngIf="tipo.activo == 0 " class="btn btn-outline-danger m-1" (click)="activar(tipo.materia)">
+											Activar
+										</button>
+										<button class="btn btn-outline-danger m-1" (click)="borrarFisicamenteTiposExpediente(tipo.materia)">
+											Borrar
+										</button>
+									</td>
+								</ng-template>
+							</ng-container>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</section>
+	</div>
 </body>

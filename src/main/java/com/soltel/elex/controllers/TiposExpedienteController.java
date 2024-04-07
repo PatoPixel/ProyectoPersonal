@@ -139,6 +139,23 @@ public class TiposExpedienteController {
 			}
 		}
 		
+		@PutMapping("/activar/{materia}")
+		public ResponseEntity<?> activarTiposExpediente(@PathVariable String materia) {
+			Optional<TiposExpedienteModel> tipoExpediente = tiposService.findByMateria(materia);
+			
+			if (tipoExpediente.isPresent()) {
+				
+				TiposExpedienteModel tipoExpedienteBorrarLogico = tipoExpediente.get();
+				tipoExpedienteBorrarLogico.setActivo(0);
+				TiposExpedienteModel guardarTipo = tiposService.CreateYUpdateTiposExpediente(tipoExpedienteBorrarLogico);
+				return ResponseEntity.ok(guardarTipo);
+				
+			}else{
+				String mensaje = "No existe un tipo de expediente con el nombre: " + materia;
+				return ResponseEntity.status(HttpStatus.NOT_FOUND).body(mensaje);
+			}
+		}
+		
 		//Borrado Fisico NO ES RECOMENDADO USARLO PARA ESTO, BORRARA TODO LO RELACIONADO QUE TENGA
 		
 		@DeleteMapping("/borradofisico/{materia}")
@@ -207,6 +224,25 @@ public class TiposExpedienteController {
 			@Hidden
 			@PostMapping("/borrarlogico/{materia}")
 			public ResponseEntity<?> borradoLogicoTiposExpedientePOST(@PathVariable String materia) {
+				Optional<TiposExpedienteModel> tipoExpediente = tiposService.findByMateria(materia);
+				
+				if (tipoExpediente.isPresent()) {
+					
+					TiposExpedienteModel tipoExpedienteBorrarLogico = tipoExpediente.get();
+					tipoExpedienteBorrarLogico.setActivo(0);
+					TiposExpedienteModel guardarTipo = tiposService.CreateYUpdateTiposExpediente(tipoExpedienteBorrarLogico);
+					return ResponseEntity.ok(guardarTipo);
+					
+				}else{
+					String mensaje = "No existe un tipo de expediente con el nombre: " + materia;
+					return ResponseEntity.status(HttpStatus.NOT_FOUND).body(mensaje);
+				}
+			}
+			
+			
+			@Hidden
+			@PostMapping("/activar/{materia}")
+			public ResponseEntity<?> activarTiposExpedientePOST(@PathVariable String materia) {
 				Optional<TiposExpedienteModel> tipoExpediente = tiposService.findByMateria(materia);
 				
 				if (tipoExpediente.isPresent()) {

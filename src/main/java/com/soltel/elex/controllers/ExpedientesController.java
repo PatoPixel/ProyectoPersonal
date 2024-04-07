@@ -21,6 +21,9 @@ import com.soltel.elex.models.TiposExpedienteModel;
 import com.soltel.elex.services.ExpedientesService;
 import com.soltel.elex.services.TiposExpedienteService;
 
+import io.swagger.v3.oas.annotations.Hidden;
+import io.swagger.v3.oas.annotations.Operation;
+
 @RestController
 @RequestMapping("/expedientes")
 public class ExpedientesController {
@@ -63,7 +66,7 @@ public class ExpedientesController {
 	
 	// Insertar  
 	
-	
+	@Operation(summary = "En la Ubicacion usar '_' luego se cambiara a '/'", description = "No se puede enviar una ubiacicon con '/' asi que usamos '_'.")
 	@PostMapping("/insertar/{Codigo}/{fecha}/{situacion}/{opciones}/{descripcion}/{prioridad}/{ubicacion}/{materia}/{activo}")
 	public ResponseEntity<?> createTiposExpediente
 	(@PathVariable String Codigo, @PathVariable LocalDate fecha, @PathVariable Situacion situacion, @PathVariable String opciones,
@@ -82,7 +85,7 @@ public class ExpedientesController {
 				if (activo == null) activo = 1;
 				
 			TiposExpedienteModel tipo = tipoExpediente.get();
-			ExpedientesModel nuevoExpediente = new ExpedientesModel(Codigo, fecha, situacion, opciones, descripcion, prioridad, ubicacion, tipo, activo);
+			ExpedientesModel nuevoExpediente = new ExpedientesModel(Codigo, fecha, situacion, opciones, descripcion, prioridad, ubicacion.replace("_", "/"), tipo, activo);
 			ExpedientesModel guardarExpediente = expedienteService.CreateYUpdateExpedientes(nuevoExpediente);
 			return ResponseEntity.ok(guardarExpediente);
 			
@@ -92,7 +95,7 @@ public class ExpedientesController {
 	
 	
 	//Update
-
+	@Operation(summary = "En la Ubicacion usar '_' luego se cambiara a '/'", description = "No se puede enviar una ubiacicon con '/' asi que usamos '_'.")
 	@PutMapping("/actualizar/{Codigo}/{CodigoNuevo}/{fecha}/{situacion}/{opciones}/{descripcion}/{prioridad}/{ubicacion}/{materia}/{activo}")
 	public ResponseEntity<?> actualizarTiposExpedienteActivo
 	(@PathVariable String Codigo, @PathVariable String CodigoNuevo, @PathVariable LocalDate fecha, @PathVariable Situacion situacion, @PathVariable String opciones,
@@ -130,7 +133,7 @@ public class ExpedientesController {
 					expedienteActualizado.setOpciones(opciones);
 					expedienteActualizado.setDescripcion(descripcion);	
 					expedienteActualizado.setPrioridad(prioridad);
-					expedienteActualizado.setUbicacion(ubicacion);
+					expedienteActualizado.setUbicacion(ubicacion.replace("_", "/"));
 					expedienteActualizado.setTipoExpediente(tipo);
 					expedienteActualizado.setActivo(activo);
 					ExpedientesModel guardarExpediente = expedienteService.CreateYUpdateExpedientes(expedienteActualizado);
@@ -148,7 +151,6 @@ public class ExpedientesController {
 	
 	
 	
-	
 	//Borrado 
 			
 	
@@ -162,6 +164,24 @@ public class ExpedientesController {
 				
 				ExpedientesModel expedienteBorrarLogico = expediente.get();
 				expedienteBorrarLogico.setActivo(0);
+				ExpedientesModel guardarExpediente = expedienteService.CreateYUpdateExpedientes(expedienteBorrarLogico);
+				return ResponseEntity.ok(guardarExpediente);
+				
+			}else{
+				String mensaje = "No existe un expediente con código: " + Codigo;
+				return ResponseEntity.status(HttpStatus.NOT_FOUND).body(mensaje);
+			}
+		}
+		
+		// Revertir borrado logico
+		@PutMapping("/activar/{Codigo}")
+		public ResponseEntity<?> activarTiposExpediente(@PathVariable String Codigo) {
+			Optional<ExpedientesModel> expediente = expedienteService.findByCodigo(Codigo);
+			
+			if (expediente.isPresent()) {
+				
+				ExpedientesModel expedienteBorrarLogico = expediente.get();
+				expedienteBorrarLogico.setActivo(1);
 				ExpedientesModel guardarExpediente = expedienteService.CreateYUpdateExpedientes(expedienteBorrarLogico);
 				return ResponseEntity.ok(guardarExpediente);
 				
@@ -193,6 +213,7 @@ public class ExpedientesController {
 		
 		//Update
 
+		@Hidden
 		@PostMapping("/actualizar/{Codigo}/{CodigoNuevo}/{fecha}/{situacion}/{opciones}/{descripcion}/{prioridad}/{ubicacion}/{materia}/{activo}")
 		public ResponseEntity<?> actualizarTiposExpedienteActivoPOST
 		(@PathVariable String Codigo, @PathVariable String CodigoNuevo, @PathVariable LocalDate fecha, @PathVariable Situacion situacion, @PathVariable String opciones,
@@ -253,7 +274,7 @@ public class ExpedientesController {
 				
 		
 			//Borrado Logico
-		
+			@Hidden
 			@PostMapping("/borrarlogico/{Codigo}")
 			public ResponseEntity<?> borradoLogicoTiposExpedientePOST(@PathVariable String Codigo) {
 				Optional<ExpedientesModel> expediente = expedienteService.findByCodigo(Codigo);
@@ -271,8 +292,28 @@ public class ExpedientesController {
 				}
 			}
 			
-			//Borrado Fisico NO ES RECOMENDADO USARLO PARA ESTO, BORRARA TODO LO RELACIONADO QUE TENGA
+			//Borrado Logico
+			@Hidden
+			@PostMapping("/activar/{Codigo}")
+			public ResponseEntity<?> activarTiposExpedientePOST(@PathVariable String Codigo) {
+				Optional<ExpedientesModel> expediente = expedienteService.findByCodigo(Codigo);
+				
+				if (expediente.isPresent()) {
+					
+					ExpedientesModel expedienteBorrarLogico = expediente.get();
+					expedienteBorrarLogico.setActivo(1);
+					ExpedientesModel guardarExpediente = expedienteService.CreateYUpdateExpedientes(expedienteBorrarLogico);
+					return ResponseEntity.ok(guardarExpediente);
+					
+				}else{
+					String mensaje = "No existe un expediente con código: " + Codigo;
+					return ResponseEntity.status(HttpStatus.NOT_FOUND).body(mensaje);
+				}
+			}
 			
+			
+			//Borrado Fisico NO ES RECOMENDADO USARLO PARA ESTO, BORRARA TODO LO RELACIONADO QUE TENGA
+			@Hidden 
 			@PostMapping("/borradofisico/{Codigo}")
 			public ResponseEntity<?> borradoFisicoTiposExpedientePOST(@PathVariable String Codigo){
 				Optional<ExpedientesModel> expediente = expedienteService.findByCodigo(Codigo);
@@ -284,6 +325,9 @@ public class ExpedientesController {
 					return ResponseEntity.ok("No existe ningún expediente con código: " + Codigo);
 				}
 			}
+			
+			
+			
 	
 		 
 }

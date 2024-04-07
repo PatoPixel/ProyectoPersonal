@@ -9,7 +9,8 @@ import { FormsModule } from '@angular/forms';
 import { HeaderComponent } from './components/header/header.component';
 import { IndexComponent } from './components/index/index.component';
 import { LoginComponent } from './components/login/login.component';
-import { ExpedientesComponent } from './components/formularios-tipos/expedientes/expedientes.component';
+import { ExpedientesComponent } from './components/expedientes/expedientes.component';
+import { ActuacionesComponent } from './components/actuaciones/actuaciones.component';
 
 
 
@@ -21,7 +22,8 @@ import { ExpedientesComponent } from './components/formularios-tipos/expedientes
     HeaderComponent,
     IndexComponent,
     LoginComponent,
-    ExpedientesComponent
+    ExpedientesComponent,
+    ActuacionesComponent
   ],
   imports: [
     BrowserModule,

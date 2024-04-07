@@ -20,16 +20,18 @@ export class ExpedientesService {
     return this.http.get<Expedientes[]>(`${this.urlBase}/consultar/${codigo}`);
   }
   
-  insertarExpedientes(expedientes: Expedientes): Observable<Expedientes> {
-    return this.http.post<Expedientes>(`${this.urlBase}/insertar/${expedientes.codigo}/${expedientes.fecha}/${expedientes.situacion}/${expedientes.opciones}/${expedientes.descripcion}/${expedientes.codigo}/${expedientes.activo}`, {});
-  }
-
-  actualizarExpedientes(expedientes: Expedientes): Observable<Expedientes> {
-    return this.http.post<Expedientes>(`${this.urlBase}/actualizar/${expedientes.codigo}/${expedientes.codigoNuevo}/${expedientes.fecha}/${expedientes.situacion}/${expedientes.opciones}/${expedientes.descripcion}/${expedientes.codigo}/${expedientes.activo}`, {});
+   insertarExpedientes(expedientes: Expedientes, materiaNueva: string): Observable<Expedientes> {
+    return this.http.post<Expedientes>(`${this.urlBase}/insertar/${expedientes.codigo}/${expedientes.fecha}/${expedientes.situacion}/${expedientes.opciones}/${expedientes.descripcion}/${expedientes.prioridad}/${expedientes.ubicacion}/${materiaNueva}/${expedientes.activo}`, {});
+   }
+  actualizarExpedientes(expedientes: Expedientes, materiaNueva:string): Observable<Expedientes> {
+    return this.http.post<Expedientes>(`${this.urlBase}/actualizar/${expedientes.codigo}/${expedientes.codigoNuevo}/${expedientes.fecha}/${expedientes.situacion}/${expedientes.opciones}/${expedientes.descripcion}/${expedientes.prioridad}/${expedientes.ubicacion}/${materiaNueva}/${expedientes.activo}`, {});
   }
 
   borrarLogicamenteExpedientes(codigo: string): Observable<Expedientes> {
     return this.http.post<Expedientes>(`${this.urlBase}/borrarlogico/${codigo}`, {});
+  }
+  activarExpedientes(codigo: string): Observable<Expedientes> {
+    return this.http.post<Expedientes>(`${this.urlBase}/activar/${codigo}`, {});
   }
 
   borrarFisicamenteExpedientes(codigo: string): Observable<Expedientes> {

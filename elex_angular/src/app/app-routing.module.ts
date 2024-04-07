@@ -2,7 +2,7 @@ import { Component, NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { FormulariosTiposComponent } from './components/formularios-tipos/formularios-tipos.component';
 import { IndexComponent } from './components/index/index.component';
-import { ExpedientesComponent } from './components/formularios-tipos/expedientes/expedientes.component';
+import { ExpedientesComponent } from './components/expedientes/expedientes.component';
 
 const routes: Routes = [
   {

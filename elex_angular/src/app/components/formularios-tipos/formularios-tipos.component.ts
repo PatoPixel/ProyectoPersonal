@@ -87,8 +87,7 @@ export class FormulariosTiposComponent implements OnInit{
   cargarTipos(): void {
     this.TiposExpedienteService.consultarTipos().subscribe(data => {
       this.tipos = data;
-      this.tipoBuscar = data;this.tipos = data;
-
+      this.tipoBuscar = data;
     })
     this.cambiarMensajeActivos()
   }
@@ -139,6 +138,7 @@ export class FormulariosTiposComponent implements OnInit{
   }
   
   actualizarTiposExpediente(materia: string,materiaNueva: string, activo: number): void {
+    this.materiaSeleccionada = ""
     let nuevoTipo: Tiposexpediente = {
       materia: materia,
       activo: activo,
@@ -195,7 +195,6 @@ export class FormulariosTiposComponent implements OnInit{
     }
   );
   }
-
   borrarFisicamenteTiposExpediente(materia: string){
     this.TiposExpedienteService.borrarFisicamenteTipos(materia).subscribe(result => {
       if (result) {

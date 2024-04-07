@@ -32,6 +32,10 @@ export class TiposexpedienteService {
     return this.http.post<Tiposexpediente>(`${this.urlBase}/borrarlogico/${materia}`, {});
   }
 
+  activarTipos(materia: string): Observable<Tiposexpediente> {
+    return this.http.post<Tiposexpediente>(`${this.urlBase}/activar/${materia}`, {});
+  }
+
   borrarFisicamenteTipos(materia: string): Observable<Tiposexpediente> {
     return this.http.post<Tiposexpediente>(`${this.urlBase}/borradofisico/${materia}`, {});
   }

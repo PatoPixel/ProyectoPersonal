@@ -1,9 +1,10 @@
-import { Component } from '@angular/core';
-import { ExpedientesService } from '../../../services/expedientes.service';
-import { Expedientes } from '../../../models/expedientes.model';
-import { TiposexpedienteService } from '../../../services/tiposexpediente.service';
-import { Tiposexpediente } from '../../../models/tiposexpediente.model';
+import { Component, ViewChild } from '@angular/core';
+import { ExpedientesService } from '../../services/expedientes.service';
+import { Expedientes } from '../../models/expedientes.model';
+import { TiposexpedienteService } from '../../services/tiposexpediente.service';
+import { Tiposexpediente } from '../../models/tiposexpediente.model';
 import { HttpErrorResponse } from '@angular/common/http';
+import { NgForm } from '@angular/forms';
 
 
 @Component({
@@ -16,30 +17,30 @@ export class ExpedientesComponent {
 
   tipos: Expedientes[] = [];
   tipoBuscar: Expedientes[] = [];
+  
 
   // Propiedades para el formulario
   codigo = ""
-  fecha: Date = new Date()
+  fecha: Date = new Date;
   situacion: string = ""
   opciones: string = ""
   descripcion: string = ""
   prioridad: string = ""
   ubicacion: string = ""
-  tipoExpdiente: Tiposexpediente = {
-    materia: '',
-    materianueva: '',
-    activo: 1
-  }
-  activo = 1;
+  tipoExpdiente: Tiposexpediente[] = []
+  activo:number = 1;
   
   // Propiedades extras
-
+  @ViewChild('form', { static: false }) form: NgForm | undefined;
+  tipoExpedienteBuscar: Tiposexpediente[] = []
   mensaje:string = ""
   mensajeError:string = ""
   codigoSeleccionado = ""
   codigoNuevo = "";
   anadir = false;
   codigoConsultar = "";
+  materiaNueva = "";
+  materiaAnadir = "Judicial";
   activoNuevo = 0;
 
   alternarAI = 1
@@ -55,11 +56,28 @@ export class ExpedientesComponent {
 
   // Funcionalidades
 
-  editarTipo(codigo: string, situacion: string, prioridad: string): void {
+  editarTipo(codigo: string, fecha: Date ,situacion: string,opciones: string, descripcion: string, prioridad: string, Ubicacion: string, materia:string ): void {
     this.codigoSeleccionado = codigo;
     this.codigoNuevo = codigo;
+    this.fecha = fecha
     this.situacion = situacion;  
     this.prioridad = prioridad
+    this.opciones = opciones
+    this.descripcion = descripcion
+    this.ubicacion = Ubicacion.replace(/_/g, "/")
+    this.BuscarTiposExpediente()
+    this.materiaNueva = materia
+  }
+
+  BuscarTiposExpediente(): void {
+    
+    this.TiposExpedienteService.consultarTipos().subscribe(data => {
+      if (Array.isArray(data)) {
+        this.tipoExpedienteBuscar = data;
+      } else {
+        this.tipoExpedienteBuscar = [data]; // Convertir el objeto a una matriz de un solo elemento
+      }
+    })
   }
 
   cancelarTipo(): void {
@@ -68,6 +86,7 @@ export class ExpedientesComponent {
 
   anadirFormulario(valor: boolean): void{
     this.anadir = valor
+    this.BuscarTiposExpediente()
   }
 
   alternarActivoInactivo():void{
@@ -96,6 +115,12 @@ export class ExpedientesComponent {
       this.mensajeActivos = "Activos e Inactivos"
     }
   }
+  formatDate(date: Date): string {
+    const year = date.getFullYear();
+    const month = ('0' + (date.getMonth() + 1)).slice(-2); // Agrega un 0 al principio si el mes es < 10
+    const day = ('0' + date.getDate()).slice(-2); // Agrega un 0 al principio si el día es < 10
+    return `${year}-${month}-${day}`;
+  }
 
   //CRUD
 
@@ -103,33 +128,37 @@ export class ExpedientesComponent {
     this.ExpedientesService.consultarExpedientes().subscribe(data => {
       this.tipos = data;
       this.tipoBuscar = data;
+      this.tipos.forEach(tipo => {
+        tipo.ubicacion = tipo.ubicacion.replace(/_/g, '/');
+        tipo.situacion = tipo.situacion.replace(/_/g, ' ')
+      });
     })
     this.cambiarMensajeActivos()
-    console.log(this.tipos)
   }
 
   insertarExpedientes(): void {
 
     if (this.activo == 1)this.activo = 0;
     else this.activo = 1;
-
     let nuevoTipo: Expedientes = {
       codigo: this.codigo,
       codigoNuevo: this.codigo,
       fecha: this.fecha,
       situacion: this.situacion,
-      opciones: "",
-      descripcion: "",
-      prioridad: "",
-      ubicacion:"",
+      opciones: this.opciones,
+      descripcion: this.descripcion,
+      prioridad: this.prioridad,
+      ubicacion:this.ubicacion,
+      
       tipoExpediente: {
         materia: '',
         materianueva: '',
         activo: 1
       },
-      activo : 1
+      activo : this.activo
     }
-    this.ExpedientesService.insertarExpedientes(nuevoTipo).subscribe(result => {
+    
+    this.ExpedientesService.insertarExpedientes(nuevoTipo, this.materiaAnadir).subscribe(result => {
       if (result) {
         this.mensaje = "Expediente Insertado"
         this.mensajeError = '';
@@ -147,9 +176,12 @@ export class ExpedientesComponent {
       }
     }
   );
-      
+      if (this.form) {
+      this.form.resetForm(); // Restablecer el formulario a su estado inicial
+    }
     this.anadir = false;
   }
+  
 
   cargarTipos2(valor: string): void {
     
@@ -166,8 +198,10 @@ export class ExpedientesComponent {
   }
   
   actualizarTiposExpediente(
-    codigo: string,codigoNuevo: string, fecha: Date, situacion: string, opciones: string, descripcion: string, prioridad:string,  ubicacion: string , activo: number
+    codigo: string,codigoNuevo: string, fecha: Date, situacion: string, opciones: string, descripcion: string, prioridad:string,  ubicacion: string, tiposexpediente:Tiposexpediente, activo: number
   ): void {
+    this.codigoSeleccionado = ""
+      
     let nuevoTipo: Expedientes = {
       codigo: codigo,
       codigoNuevo: codigoNuevo,
@@ -176,15 +210,11 @@ export class ExpedientesComponent {
       opciones: opciones,
       descripcion: descripcion,
       prioridad: prioridad,
-      ubicacion: ubicacion,
-      tipoExpediente: {
-        materia: '',
-        materianueva: '',
-        activo: 1
-      },
+      ubicacion: ubicacion = ubicacion.replace(/\//g, "_"),
+      tipoExpediente: tiposexpediente,
       activo : activo
     }
-    this.ExpedientesService.actualizarExpedientes(nuevoTipo).subscribe(result => {
+    this.ExpedientesService.actualizarExpedientes(nuevoTipo, this.materiaNueva ).subscribe(result => {
         if (result) {
           this.mensaje = "Tipo Expediente: '" + codigo + "' se actualizó a: '" + codigoNuevo + "'"
           this.mensajeError = ""
@@ -197,26 +227,15 @@ export class ExpedientesComponent {
           this.mensajeError = error.error; // Asignar el mensaje de error al atributo errorMsg
           this.mensaje = "";
         } else {
-          this.mensajeError = 'Error desconocido'; // Manejar otros tipos de errorç
+          this.mensajeError = 'Error desconocido'; // Manejar otros tipos de error
           this.mensaje = "";
         }
       }
     );
   }
+
   activar(codigo: string): void {
-    let nuevoTipo: Expedientes = {
-      codigo: codigo,
-      activo: 1,
-      codigoNuevo: codigo,
-      fecha: this.fecha,
-      situacion: this.situacion,
-      opciones: this.opciones,
-      descripcion: this.descripcion,
-      prioridad: this.prioridad,
-      ubicacion: this.ubicacion,
-      tipoExpediente: this.tipoExpdiente
-    }
-    this.ExpedientesService.actualizarExpedientes(nuevoTipo).subscribe(result => {
+    this.ExpedientesService.activarExpedientes(codigo).subscribe(result => {
         if (result) {
           this.mensaje = "Tipo Expediente: '" + codigo + "' se activó"
           this.mensajeError = ""
