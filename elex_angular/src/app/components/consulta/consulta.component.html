@@ -1,0 +1,110 @@
+<app-header></app-header>
+<div class="example-wrapper">
+	<div class="example-wrapper" style="width: 900px">
+		<h1>TABLA CONSULTA</h1>
+		<br>
+		<!-- Formulario para añadir -->
+
+		<div>
+			<table class="example-wrapper">
+				<tr>
+					<td>
+						<label for="expedienteConsultar">Expediente:</label>
+						<select [(ngModel)]="expedienteConsultar" class="form-select">
+							<option *ngFor="let tipo of tipoExpdiente" [value]="tipo.codigo">
+								{{ tipo.codigo}}
+							</option>
+						</select>
+					</td>
+					<td>
+						<button (click)="cargarTipos2(expedienteConsultar)" class="btn btn-primary m-1">
+							Buscar
+						</button>
+					</td>
+					<td>
+						<button (click)="cargarTipos()" class="btn btn-primary m-1">
+							Ver Todos
+						</button>
+					</td>
+					<td>
+						<button (click)="alternarActivoInactivo()" class="btn btn-primary">
+							Alternar entre Activo/Inactivo
+						</button>
+					</td>
+					<td>
+						<button (click)="mostrarAI()" class="btn btn-primary">
+							Ver Inactivos y Activos
+						</button>
+					</td>
+				</tr>
+			</table>
+			<div *ngIf="mensajeActivos" aria-label='success container' class="w-25 justify-content-center">
+				<p class="alert alert-info">
+					{{ mensajeActivos }}
+				</p>
+			</div>
+			<!-- Funciones varias -->
+
+
+			<!-- Tabla donde se muestran los datos -->
+
+
+			<div style="max-height: 470px; overflow-y: auto;">
+				<table class="table mt-3 tabla example-wrapper">
+					<thead style="position: sticky; top: 0; z-index: 1; background-color: white;">
+						<tr>
+							<th scope="col">Materia</th>
+							<th scope="col">Expediente</th>
+							<th scope="col">Fecha</th>
+							<th scope="col">Descripcion</th>
+							<th scope="col">Actuaciones</th>
+							<th scope="col">Documentos</th>
+							<th scope="col">Activo</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr *ngFor="let tipo of tipoExpedienteBuscar">
+							<ng-container *ngIf="tipo.activo == alternarAI || tipo.activo == mostrarActivosInactivos">
+
+
+								<td style="padding: 15px 0px 0px 21px">
+									{{ tipo.tipoExpediente.materia }}
+								</td>
+
+								<td style="padding: 15px 0px 0px 21px;" class="w-25">
+									{{ tipo.codigo }}
+								</td>
+								<td style="padding: 15px 0px 0px 21px">
+									{{ tipo.fecha }}
+								</td>
+								<td style="padding: 15px 0px 0px 21px" class="w-25">
+									{{ tipo.descripcion }}
+								</td>
+								<td style="padding: 15px 0px 0px 21px; width: 10px;">
+									<ng-container *ngFor="let tipos of tipoBuscar">
+										<ng-container *ngIf="tipos.expediente.codigo == tipo.codigo">
+                                                    {{ tipo.descripcion }}  
+                                        </ng-container>
+									</ng-container>
+								</td>
+								<td style="padding: 15px 0px 0px 21px; width: 10px;">
+									<ng-container *ngFor="let tipos of Documentos">
+										<ng-container *ngIf="tipos.expediente.codigo == tipo.codigo">
+											<button class="btn btn-outline-dark" (click)="verFoto(tipos.ruta)">{{ tipos.ruta }}</button>
+										</ng-container>
+									</ng-container>
+								</td>
+								<td style="padding: 15px 0px 0px 21px; width: 10px;">
+									{{ tipo.activo }}
+								</td>
+							</ng-container>
+						</tr>
+					</tbody>
+				</table>
+
+			</div>
+			<div *ngIf="foto" style="background-color: black">
+
+				<img [src]="foto" alt="" >
+				<button class="btn btn-light" (click)="cerrarFoto()">Cerrar</button>
+			</div>

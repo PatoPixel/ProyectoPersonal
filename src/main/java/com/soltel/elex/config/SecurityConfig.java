@@ -26,7 +26,7 @@ public class SecurityConfig {
 	        .cors(cors -> cors.configurationSource(request -> new CorsConfiguration().applyPermitDefaultValues()))
 	        .csrf(csrf -> csrf.disable())
 	        .authorizeHttpRequests(auth -> auth
-	            .requestMatchers("/tiposexpediente/**", "/expedientes/**", "/actuaciones/**", "/documentos/**").permitAll()
+	            .requestMatchers("/tiposexpediente/**", "/expedientes/**", "/actuaciones/**", "/documentos/**", "/media/**").permitAll()
 	            .anyRequest().authenticated())
 	        .formLogin(form -> form.
 	        		defaultSuccessUrl("/swagger-ui/index.html")); // Eliminar la configuración de redirección

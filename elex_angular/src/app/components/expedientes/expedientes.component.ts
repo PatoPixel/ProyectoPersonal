@@ -5,6 +5,8 @@ import { TiposexpedienteService } from '../../services/tiposexpediente.service';
 import { Tiposexpediente } from '../../models/tiposexpediente.model';
 import { HttpErrorResponse } from '@angular/common/http';
 import { NgForm } from '@angular/forms';
+import { AutenticacionService } from '../../services/autenticacion.service';
+import { Router } from '@angular/router';
 
 
 @Component({
@@ -13,12 +15,13 @@ import { NgForm } from '@angular/forms';
   styleUrl: './expedientes.component.css'
 })
 export class ExpedientesComponent {
-  constructor (private ExpedientesService: ExpedientesService, private TiposExpedienteService: TiposexpedienteService) {}
+  constructor (private ExpedientesService: ExpedientesService, private TiposExpedienteService: TiposexpedienteService, private autenticacionService: AutenticacionService, private router: Router) {}
+  
 
   tipos: Expedientes[] = [];
   tipoBuscar: Expedientes[] = [];
   
-
+mostrar = false
   // Propiedades para el formulario
   codigo = ""
   fecha: Date = new Date;
@@ -64,7 +67,7 @@ export class ExpedientesComponent {
     this.prioridad = prioridad
     this.opciones = opciones
     this.descripcion = descripcion
-    this.ubicacion = Ubicacion.replace(/_/g, "/")
+    this.ubicacion = Ubicacion
     this.BuscarTiposExpediente()
     this.materiaNueva = materia
   }
@@ -268,6 +271,7 @@ export class ExpedientesComponent {
   }
 
   borrarFisicamenteExpedientes(codigo: string){
+    if (confirm("¿Está seguro? Se eliminará el registro permanentemente")){
     this.ExpedientesService.borrarFisicamenteExpedientes(codigo).subscribe(result => {
       if (result) {
         this.mensaje = "Expediente: '" + codigo + "' se eliminó"
@@ -282,5 +286,5 @@ export class ExpedientesComponent {
         this.cargarTipos();
     }
   );
-  }
+  }}
 }

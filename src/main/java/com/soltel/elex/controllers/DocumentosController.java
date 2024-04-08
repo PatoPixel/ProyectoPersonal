@@ -19,6 +19,8 @@ import com.soltel.elex.models.ExpedientesModel;
 import com.soltel.elex.services.DocumentosService;
 import com.soltel.elex.services.ExpedientesService;
 
+import io.swagger.v3.oas.annotations.Hidden;
+
 @RestController
 @RequestMapping("/documentos")
 public class DocumentosController {
@@ -48,12 +50,12 @@ public class DocumentosController {
 	
 	 	//FinByruta
 	@GetMapping("/consultar/{ruta}")
-	public ResponseEntity<?> getByRuta(@RequestParam("ruta") String ruta) {
-	    Optional<DocumentosModel> documento = documentoService.findByRuta(ruta);
+	public ResponseEntity<?> getByRuta(@PathVariable String ruta) {
+	    Optional<DocumentosModel> documento = documentoService.findByRuta(ruta.replace("_", "/"));
 	    if (documento.isPresent()) {
 	        return ResponseEntity.ok(documento.get());
 	    } else {
-	        String mensaje = "No se encontró ningún documento con ruta: " + ruta;
+	        String mensaje = "No se encontró ningún documento con ruta: " + ruta.replace("_", "/");
 	        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(mensaje);
 	    }
 	}
@@ -64,11 +66,12 @@ public class DocumentosController {
 
 	@PostMapping("/insertar/{ruta}/{tarifa}/{categoria}/{expediente}/{activo}")
 	public ResponseEntity<?> createTiposdocumento
-	(@RequestParam("ruta") String ruta, @PathVariable float tarifa, @PathVariable String categoria, @PathVariable String expediente, @RequestParam(required = false) Integer activo) {
+	(@PathVariable String ruta, @PathVariable float tarifa, @PathVariable String categoria, @PathVariable String expediente, @PathVariable int activo) {
 		
-		Optional<DocumentosModel> documento = documentoService.findByRuta(ruta);
+		if (tarifa >= 0) {
+		Optional<DocumentosModel> documento = documentoService.findByRuta(ruta.replace("_", "/"));
 		if (documento.isPresent()) {
-			String mensaje = "Ya existe un documento con ruta: " + ruta;
+			String mensaje = "Ya existe un documento con ruta: " + ruta.replace("_", "/");
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(mensaje);
 		}else {
 			Optional<ExpedientesModel> expedienteCodigo = expedienteService.findByCodigo(expediente);
@@ -76,15 +79,18 @@ public class DocumentosController {
 				String mensaje = "No existe un expediente con codigo: " + expediente;
 				return ResponseEntity.status(HttpStatus.NOT_FOUND).body(mensaje);
 			}else {
-				if (activo == null) activo = 1;
-
+				
 				ExpedientesModel expedienteCompleto = expedienteCodigo.get();
-				DocumentosModel nuevodocumento = new DocumentosModel(ruta, tarifa, categoria, expedienteCompleto, activo);
+				DocumentosModel nuevodocumento = new DocumentosModel(ruta.replace("_", "/"), tarifa, categoria, expedienteCompleto, activo);
 				DocumentosModel guardardocumento = documentoService.CreateYUpdateDocumentos(nuevodocumento);
 				return ResponseEntity.ok(guardardocumento);
-				
+				}
 			}
+		}else {
+			String mensaje = "La tarifa no puede ser un numero negativo";
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(mensaje);
 		}
+		
 	}
 	
 	
@@ -92,10 +98,10 @@ public class DocumentosController {
 
 	@PutMapping("/actualizar/{ruta}/{rutaNueva}/{tarifa}/{categoria}/{expediente}/{activo}")
 	public ResponseEntity<?> actualizarTiposdocumento
-	(@RequestParam("ruta") String ruta,@RequestParam("rutaNueva") String rutaNueva, @PathVariable float tarifa, @PathVariable String categoria, @PathVariable String expediente, @RequestParam(required = false) Integer activo) {
-				
-		Optional<DocumentosModel> documento = documentoService.findByRuta(ruta);
-		Optional<DocumentosModel> documentoNuevo = documentoService.findByRuta(rutaNueva);
+	(@PathVariable String ruta,@PathVariable String rutaNueva, @PathVariable float tarifa, @PathVariable String categoria, @PathVariable String expediente, @PathVariable int activo) {
+		if (tarifa >= 0) {		
+		Optional<DocumentosModel> documento = documentoService.findByRuta(ruta.replace("_", "/"));
+		Optional<DocumentosModel> documentoNuevo = documentoService.findByRuta(rutaNueva.replace("_", "/"));
 		int documentoDatos;
 		int documentoNuevoDatos;
 		
@@ -114,11 +120,10 @@ public class DocumentosController {
 				String mensaje = "No existe un expediente con codigo: " + expediente;
 				return ResponseEntity.status(HttpStatus.NOT_FOUND).body(mensaje);
 				}else {
-					if (activo == null) activo = 1;
 					
 					ExpedientesModel expedienteCompleto = expedienteCodigo.get();
 					DocumentosModel documentoActualizado = documento.get();
-					documentoActualizado.setRuta(rutaNueva);
+					documentoActualizado.setRuta(rutaNueva.replace("_", "/"));
 					documentoActualizado.setTarifa(tarifa);
 					documentoActualizado.setCategoria(categoria);
 					documentoActualizado.setActivo(activo);
@@ -134,8 +139,11 @@ public class DocumentosController {
 				String mensaje = "Ya existe un documento con la siguiente ruta: " + rutaNueva;
 				return ResponseEntity.status(HttpStatus.NOT_FOUND).body(mensaje);
 			}
+		}else {
+			String mensaje = "La tarifa no puede ser un numero negativo";
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(mensaje);
 		}
-	
+	}
 	
 	
 	
@@ -145,8 +153,8 @@ public class DocumentosController {
 		//Borrado Logico
 	
 		@PutMapping("/borrarlogico/{ruta}")
-		public ResponseEntity<?> borradoLogicoTiposDocumento(@RequestParam("ruta") String ruta) {
-			Optional<DocumentosModel> documento = documentoService.findByRuta(ruta);
+		public ResponseEntity<?> borradoLogicoTiposDocumento(@PathVariable String ruta) {
+			Optional<DocumentosModel> documento = documentoService.findByRuta(ruta.replace("_", "/"));
 			
 			if (documento.isPresent()) {
 				
@@ -156,7 +164,7 @@ public class DocumentosController {
 				return ResponseEntity.ok(guardardocumento);
 				
 			}else{
-				String mensaje = "No existe un documento con ruta: " + ruta;
+				String mensaje = "No existe un documento con ruta: " + ruta.replace("_", "/");
 				return ResponseEntity.status(HttpStatus.NOT_FOUND).body(mensaje);
 			}
 		}
@@ -164,14 +172,30 @@ public class DocumentosController {
 		//Borrado Fisico NO ES RECOMENDADO USARLO PARA ESTO, BORRARA TODO LO RELACIONADO QUE TENGA
 		
 		@DeleteMapping("/borradofisico/{ruta}")
-		public ResponseEntity<?> borradoFisicoTiposdocumento(@RequestParam("ruta") String ruta){
-			Optional<DocumentosModel> documento = documentoService.findByRuta(ruta);
+		public ResponseEntity<?> borradoFisicoTiposdocumento(@PathVariable String ruta){
+			Optional<DocumentosModel> documento = documentoService.findByRuta(ruta.replace("_", "/"));
 			
 			if (documento.isPresent()) {
-				documentoService.DeleteDocumentos(ruta);
+				documentoService.DeleteDocumentos(ruta.replace("_", "/"));
 				return ResponseEntity.ok("Documento borrado");
 			} else {
-				return ResponseEntity.ok("No existe ningún documento con ruta: " + ruta);
+				return ResponseEntity.ok("No existe ningún documento con ruta: " + ruta.replace("_", "/"));
+			}
+		}
+		@PutMapping("/activar/{ruta}")
+		public ResponseEntity<?> activarDocumento(@PathVariable String ruta) {
+			Optional<DocumentosModel> documento = documentoService.findByRuta(ruta.replace("_", "/"));
+			
+			if (documento.isPresent()) {
+				
+				DocumentosModel documentoBorrarLogico = documento.get();
+				documentoBorrarLogico.setActivo(1);
+				DocumentosModel guardardocumento = documentoService.CreateYUpdateDocumentos(documentoBorrarLogico);
+				return ResponseEntity.ok(guardardocumento);
+				
+			}else{
+				String mensaje = "No existe un documento con ruta: " + ruta.replace("_", "/");
+				return ResponseEntity.status(HttpStatus.NOT_FOUND).body(mensaje);
 			}
 		}
 	
@@ -183,13 +207,15 @@ public class DocumentosController {
 		
 		
 		//Update
-
+		@Hidden
 		@PostMapping("/actualizar/{ruta}/{rutaNueva}/{tarifa}/{categoria}/{expediente}/{activo}")
 		public ResponseEntity<?> actualizarTiposdocumentoPOST
-		(@RequestParam("ruta") String ruta,@RequestParam("rutaNueva") String rutaNueva, @PathVariable float tarifa, @PathVariable String categoria, @PathVariable String expediente, @RequestParam(required = false) Integer activo) {
-					
-			Optional<DocumentosModel> documento = documentoService.findByRuta(ruta);
-			Optional<DocumentosModel> documentoNuevo = documentoService.findByRuta(rutaNueva);
+		(@PathVariable String ruta,@PathVariable String rutaNueva, @PathVariable float tarifa, @PathVariable String categoria, @PathVariable String expediente, @PathVariable int activo) {
+			
+			
+			if (tarifa >= 0){
+			Optional<DocumentosModel> documento = documentoService.findByRuta(ruta.replace("_", "/"));
+			Optional<DocumentosModel> documentoNuevo = documentoService.findByRuta(rutaNueva.replace("_", "/"));
 			int documentoDatos;
 			int documentoNuevoDatos;
 			
@@ -203,16 +229,15 @@ public class DocumentosController {
 			if (documento.isPresent() && !documentoNuevo.isPresent() ||
 					documentoDatos == documentoNuevoDatos) {
 				
-				Optional<ExpedientesModel> expedienteCodigo = expedienteService.findByCodigo(expediente);
+				Optional<ExpedientesModel> expedienteCodigo = expedienteService.findByCodigo(expediente.replace("_", "/"));
 				if (!expedienteCodigo.isPresent()) {
 					String mensaje = "No existe un expediente con codigo: " + expediente;
 					return ResponseEntity.status(HttpStatus.NOT_FOUND).body(mensaje);
 					}else {
-						if (activo == null) activo = 1;
 						
 						ExpedientesModel expedienteCompleto = expedienteCodigo.get();
 						DocumentosModel documentoActualizado = documento.get();
-						documentoActualizado.setRuta(rutaNueva);
+						documentoActualizado.setRuta(rutaNueva.replace("_", "/"));
 						documentoActualizado.setTarifa(tarifa);
 						documentoActualizado.setCategoria(categoria);
 						documentoActualizado.setActivo(activo);
@@ -228,7 +253,11 @@ public class DocumentosController {
 					String mensaje = "Ya existe un documento con la siguiente ruta: " + rutaNueva;
 					return ResponseEntity.status(HttpStatus.NOT_FOUND).body(mensaje);
 				}
+			}else {
+				String mensaje = "La tarifa no puede ser un numero negativo";
+				return ResponseEntity.status(HttpStatus.NOT_FOUND).body(mensaje);
 			}
+}
 		
 		
 		
@@ -237,10 +266,10 @@ public class DocumentosController {
 				
 		
 			//Borrado Logico
-		
+			@Hidden
 			@PostMapping("/borrarlogico/{ruta}")
-			public ResponseEntity<?> borradoLogicoTiposDocumentoPOST(@RequestParam("ruta") String ruta) {
-				Optional<DocumentosModel> documento = documentoService.findByRuta(ruta);
+			public ResponseEntity<?> borradoLogicoTiposDocumentoPOST(@PathVariable String ruta) {
+				Optional<DocumentosModel> documento = documentoService.findByRuta(ruta.replace("_", "/"));
 				
 				if (documento.isPresent()) {
 					
@@ -250,22 +279,39 @@ public class DocumentosController {
 					return ResponseEntity.ok(guardardocumento);
 					
 				}else{
-					String mensaje = "No existe un documento con ruta: " + ruta;
+					String mensaje = "No existe un documento con ruta: " + ruta.replace("_", "/");
+					return ResponseEntity.status(HttpStatus.NOT_FOUND).body(mensaje);
+				}
+			}
+			@Hidden
+			@PostMapping("/activar/{ruta}")
+			public ResponseEntity<?> activarDocumentoPOST(@PathVariable String ruta) {
+				Optional<DocumentosModel> documento = documentoService.findByRuta(ruta.replace("_", "/"));
+				
+				if (documento.isPresent()) {
+					
+					DocumentosModel documentoBorrarLogico = documento.get();
+					documentoBorrarLogico.setActivo(1);
+					DocumentosModel guardardocumento = documentoService.CreateYUpdateDocumentos(documentoBorrarLogico);
+					return ResponseEntity.ok(guardardocumento);
+					
+				}else{
+					String mensaje = "No existe un documento con ruta: " + ruta.replace("_", "/");
 					return ResponseEntity.status(HttpStatus.NOT_FOUND).body(mensaje);
 				}
 			}
 			
 			//Borrado Fisico NO ES RECOMENDADO USARLO PARA ESTO, BORRARA TODO LO RELACIONADO QUE TENGA
-			
+			@Hidden
 			@PostMapping("/borradofisico/{ruta}")
-			public ResponseEntity<?> borradoFisicoTiposdocumentoPOST(@RequestParam("ruta") String ruta){
-				Optional<DocumentosModel> documento = documentoService.findByRuta(ruta);
+			public ResponseEntity<?> borradoFisicoTiposdocumentoPOST(@PathVariable String ruta){
+				Optional<DocumentosModel> documento = documentoService.findByRuta(ruta.replace("_", "/"));
 				
 				if (documento.isPresent()) {
-					documentoService.DeleteDocumentos(ruta);
+					documentoService.DeleteDocumentos(ruta.replace("_", "/"));
 					return ResponseEntity.ok("Documento borrado");
 				} else {
-					return ResponseEntity.ok("No existe ningún documento con ruta: " + ruta);
+					return ResponseEntity.ok("No existe ningún documento con ruta: " + ruta.replace("_", "/"));
 				}
 			}
 		

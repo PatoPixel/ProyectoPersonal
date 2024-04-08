@@ -5,12 +5,14 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { FormulariosTiposComponent } from './components/formularios-tipos/formularios-tipos.component';
 import { HttpClientModule } from '@angular/common/http';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HeaderComponent } from './components/header/header.component';
 import { IndexComponent } from './components/index/index.component';
 import { LoginComponent } from './components/login/login.component';
 import { ExpedientesComponent } from './components/expedientes/expedientes.component';
 import { ActuacionesComponent } from './components/actuaciones/actuaciones.component';
+import { DocumentosComponent } from './components/documentos/documentos.component';
+import { ConsultaComponent } from './components/consulta/consulta.component';
 
 
 
@@ -23,13 +25,16 @@ import { ActuacionesComponent } from './components/actuaciones/actuaciones.compo
     IndexComponent,
     LoginComponent,
     ExpedientesComponent,
-    ActuacionesComponent
+    ActuacionesComponent,
+    DocumentosComponent,
+    ConsultaComponent,
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     HttpClientModule,
-    FormsModule
+    FormsModule,
+    ReactiveFormsModule
   ],
   providers: [],
   bootstrap: [AppComponent]

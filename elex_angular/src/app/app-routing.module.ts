@@ -4,6 +4,10 @@ import { FormulariosTiposComponent } from './components/formularios-tipos/formul
 import { IndexComponent } from './components/index/index.component';
 import { ExpedientesComponent } from './components/expedientes/expedientes.component';
 import { ActuacionesComponent } from './components/actuaciones/actuaciones.component';
+import { DocumentosComponent } from './components/documentos/documentos.component';
+import { LoginComponent } from './components/login/login.component';
+import { AutenticacionGuard } from './guards/autenticacion.guard';
+import { ConsultaComponent } from './components/consulta/consulta.component';
 
 const routes: Routes = [
   {
@@ -11,21 +15,38 @@ const routes: Routes = [
     pathMatch: "full",
     redirectTo: "login",
   },
-   {
-     path: "tiposexpediente",
-     component: FormulariosTiposComponent,
-  },
   {
-    path: "expedientes",
-    component: ExpedientesComponent,
-  },
-  {
-    path: "actuaciones",
-    component: ActuacionesComponent,
+    path: "documentos",
+    component: DocumentosComponent,
   },
   {
     path: "index",
     component: IndexComponent,
+  },
+   {
+     path: "tiposexpediente",
+     component: FormulariosTiposComponent,
+     canActivate: [AutenticacionGuard]
+  },
+  {
+    path: "expedientes",
+    component: ExpedientesComponent,
+    canActivate: [AutenticacionGuard]
+  },
+  {
+    path: "actuaciones",
+    component: ActuacionesComponent,
+
+  },
+  {
+    path: "consulta",
+    component: ConsultaComponent,
+
+  },
+  
+  {
+    path: "login",
+    component: LoginComponent,
   }
 ];
 

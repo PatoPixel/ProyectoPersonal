@@ -201,6 +201,7 @@ export class FormulariosTiposComponent implements OnInit{
   );
   }
   borrarFisicamenteTiposExpediente(materia: string){
+    if (confirm("¿Está seguro? Se eliminará el registro permanentemente")){
     this.TiposExpedienteService.borrarFisicamenteTipos(materia).subscribe(result => {
       if (result) {
         this.mensaje = "Tipo Expediente: '" + materia + "' se eliminó"
@@ -215,5 +216,5 @@ export class FormulariosTiposComponent implements OnInit{
         this.cargarTipos();
     }
   );
-  }
+  }}
 }

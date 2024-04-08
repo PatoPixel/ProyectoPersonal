@@ -1,1 +1,26 @@
-<p>login works!</p>
+<div class="container">
+	<div class="row">
+		<div class="col">
+			<form [formGroup]="myForm" (ngSubmit)="submitFormulario()">
+				<div class="form-group">
+					<label for="Usuario">Usuario</label>
+					<input formControlName="usuario" type="text" name="usuario"class="form-control" [class.is-invalid]="f.usuario.errors && f.usuario.touched" placeholder="Usuario">
+					<small class="form-text text-muted">soltel</small>
+                    <div class="invalid-feedback">
+                        Usuario Obligatorio
+                    </div>
+                </div>
+				<div class="form-group">
+					<label for="exampleInputPassword1">Password</label>
+					<input formControlName="contraseña"type="password" class="form-control" [class.is-invalid]="f.usuario.errors && f.usuario.touched" id="exampleInputPassword1" placeholder="Password">
+                    <small class="form-text text-muted">admin</small>
+                    <div class="invalid-feedback">
+                        Contraseña Obligatoria
+                    </div>
+                </div>
+                <br>
+				<button type="submit" class="btn btn-primary">Submit</button>
+			</form>
+		</div>
+	</div>
+</div>

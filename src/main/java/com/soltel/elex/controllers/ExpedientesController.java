@@ -248,7 +248,7 @@ public class ExpedientesController {
 						expedienteActualizado.setOpciones(opciones);
 						expedienteActualizado.setDescripcion(descripcion);	
 						expedienteActualizado.setPrioridad(prioridad);
-						expedienteActualizado.setUbicacion(ubicacion);
+						expedienteActualizado.setUbicacion(ubicacion.replace("_", "/"));
 						expedienteActualizado.setTipoExpediente(tipo);
 						expedienteActualizado.setActivo(activo);
 						ExpedientesModel guardarExpediente = expedienteService.CreateYUpdateExpedientes(expedienteActualizado);

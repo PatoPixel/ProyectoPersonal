@@ -229,7 +229,6 @@ export class ActuacionesComponent {
 
       if (finalizado)finalizado = 1
       else finalizado = 0
-    console.log(fecha)
     let nuevoTipo: Actuaciones = {
       descripcion: codigo,
       descripcionNueva: codigoNuevo,
@@ -295,6 +294,7 @@ export class ActuacionesComponent {
   }
 
   borrarFisicamenteActuaciones(codigo: string, expediente: string){
+    if (confirm("¿Está seguro? Se eliminará el registro permanentemente")){
     this.ActuacionesService.borrarFisicamenteActuaciones(codigo, expediente).subscribe(result => {
       if (result) {
         this.mensaje = "Actuacion: '" + codigo + "' se eliminó"
@@ -309,6 +309,6 @@ export class ActuacionesComponent {
         this.cargarTipos();
     }
   );
-  }
+  }}
 }
 

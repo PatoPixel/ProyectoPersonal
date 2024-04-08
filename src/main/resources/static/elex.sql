@@ -75,7 +75,7 @@ VALUES ("Judicial"), ("Asistencia"), ("Informe"), ("Moción");
 INSERT INTO expedientes
 (codigo, fecha, situacion, opciones, descripcion,prioridad, ubicacion, tipo)
 VALUES
-("SEV-20240320-001", "2024-03-20", 'Pendiente', "Urgente, Confidencial", "Test1", "Alta", "Sevilla/Edificio Sevilla 1", 1),
+("SEV-20240320-001", "2024-03-20", 'Pendiente', "Urgente, Confidencial", "Test1", "Alta", "Sevilla/Edificio_Sevilla_1", 1),
 ("SEV-20240320-002", "2024-03-20", 'En_Espera_De_Juicio', "Urgente, Confidencial", "Test2", "Media", "Madrid/C. Principal", 2),
 ("SEV-20240320-003", "2024-03-20", 'Enviado', "Urgente", "Test3", "Baja", "Barcelona/casa", 1);
 
@@ -90,7 +90,7 @@ VALUES
 INSERT INTO documentos
 (ruta, tarifa, categoria,expediente)
 VALUES 
-("static/pdfs/doc001d.pdf", 100.55, "Sport", 1),
+("static", 100.55, "Sport", 1),
 ("static/pdfs/doc002d.pdf", 90.55, "Futbil", 2),
 ("static/pdfs/doc003d.pdf", 80.55, "Financiera", 3);
 

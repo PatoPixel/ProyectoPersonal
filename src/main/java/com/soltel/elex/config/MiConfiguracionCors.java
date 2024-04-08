@@ -21,6 +21,23 @@ public class MiConfiguracionCors implements WebMvcConfigurer {
         	.allowedMethods("GET", "POST", "PUT", "DELETE", "OPTION")
         	.allowedHeaders("Content-Type", "Authorization")
             .allowCredentials(true);
+        
+        registry.addMapping("/actuaciones/**")
+    	.allowedOrigins("http://localhost:4200")
+    	.allowedMethods("GET", "POST", "PUT", "DELETE", "OPTION")
+    	.allowedHeaders("Content-Type", "Authorization")
+        .allowCredentials(true);
+    
+        registry.addMapping("/documentos/**")
+    	.allowedOrigins("http://localhost:4200")
+    	.allowedMethods("GET", "POST", "PUT", "DELETE", "OPTION")
+    	.allowedHeaders("Content-Type", "Authorization")
+        .allowCredentials(true);
+        registry.addMapping("/media/**")
+    	.allowedOrigins("http://localhost:4200")
+    	.allowedMethods("GET", "POST", "PUT", "DELETE", "OPTION")
+    	.allowedHeaders("Content-Type", "Authorization")
+        .allowCredentials(true);
     	
     }
 }

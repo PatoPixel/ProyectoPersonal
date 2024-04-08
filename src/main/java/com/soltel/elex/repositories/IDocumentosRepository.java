@@ -5,6 +5,7 @@ import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+
 import com.soltel.elex.models.DocumentosModel;
 
 @Repository
@@ -14,4 +15,5 @@ public interface IDocumentosRepository extends JpaRepository<DocumentosModel, In
 	
 	
     void deleteByRuta(String ruta);
+    
 }

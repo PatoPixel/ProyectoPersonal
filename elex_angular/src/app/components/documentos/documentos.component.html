@@ -1,24 +1,28 @@
+
 <app-header></app-header>
 <body>
 	<div class="example-wrapper">
 		<div class="example-wrapper" style="width: 900px">
-			<h1>TABLA ACTUACIONES</h1>
+			<h1>TABLA DOCUMENTOS</h1>
 			<br>
 			<!-- Formulario para añadir -->
-
-			<form (ngSubmit)="insertarExpedientes()" #form="ngForm" class="container mt-4" *ngIf="anadir">
+			<form (ngSubmit)="upload()" #form="ngForm" class="container mt-4" *ngIf="anadir">
 				<div class="row">
+					<div class="col-md-6">
+						<label for="archivo" class="form-label">
+							Archivo
+						</label>
+						<input type="file" name="image" id="image" class="form-control" accept="image/**" (change)="onFileSelected($event)">
+					</div>
 					<div class="col-md-3">
-						<label for="codigoInput" class="form-label">Descripcion</label>
-						<input type="text" name="codigo" id="codigoInput" class="form-control" [(ngModel)]="codigo" required/>
-
-						<label for="fechaInput" class="form-label">Fecha</label>
-						<input type="date" name="fecha" id="fechaInput" class="form-control" [(ngModel)]="fecha" required/>
+						<label for="tarifaInput" class="form-label">Tarifa</label>
+						<input type="number" class="form-control" id="tarifa" name="tarifa" [(ngModel)]="tarifa"/>
+						<label for="categorianput" class="form-label">Categoria</label>
+						<input type="text" class="form-control" id="tarifa" name="categoria" [(ngModel)]="categoria"/>
 					</div>
 
+
 					<div class="col-md-3">
-						<label for="modalidadInput" class="form-label">Modalidad</label>
-						<input type="text" name="cmodalidad" id="modalidadInput" class="form-control" [(ngModel)]="modalidad" required/>
 
 						<label for="expedienteInput" class="form-label">Expediente</label>
 						<select [(ngModel)]="expedienteAnadir" class="form-select" name="expedienteAnadir">
@@ -28,15 +32,12 @@
 						</select>
 					</div>
 					<div class="col-md-3">
-						<label for="finalizadoInput" class="form-label">¿Ha finalizado?</label>
-						<section class="form-check">
-							<input type="checkbox" class="form-check-input" id="finalizado" name="finalizado" [(ngModel)]="finalizado"/>
-						</section>
 						<label for="activoInput" class="form-label">¿Quiere añadirlo activado?</label>
 						<section class="form-check">
 							<input type="checkbox" class="form-check-input" id="activo" name="activo" [(ngModel)]="activo" value="1"/>
 						</section>
 					</div>
+
 
 				</div>
 				<button type="submit" class="btn btn-primary m-1" [disabled]="!form.valid">
@@ -82,26 +83,14 @@
 					<table class="example-wrapper">
 						<tr>
 							<td>
-                                <label for="expedienteConsultar">Expediente:</label>
 								<select [(ngModel)]="expedienteConsultar" class="form-select">
-									<option *ngFor="let tipo of tipoExpedienteBuscar" [value]="tipo.codigo">
-										{{ tipo.codigo}}
+									<option *ngFor="let tipo of tipoBuscar" [value]="tipo.ruta">
+										{{ tipo.ruta}}
 									</option>
 								</select>
-                                <label for="codigoConsultar">Descripcion:</label>
-                                <select [(ngModel)]="codigoConsultar" class="form-select">
-									<ng-container *ngFor="let tipo of tipoBuscar">
-                                    <ng-container *ngIf="tipo.expediente.codigo == expedienteConsultar">
-                                    <option [value]="tipo.descripcion">
-										{{ tipo.descripcion }}
-                                    </option>
-                                    </ng-container>
-									</ng-container>
-								</select>
-                                
 							</td>
 							<td>
-								<button (click)="cargarTipos2(codigoConsultar, expedienteConsultar )" class="btn btn-primary m-1">
+								<button (click)="cargarTipos2(expedienteConsultar)" class="btn btn-primary m-1">
 									Buscar
 								</button>
 							</td>
@@ -141,10 +130,9 @@
 			<table class="table mt-3 tabla example-wrapper">
 				<thead style="position: sticky; top: 0; z-index: 1; background-color: white;">
 					<tr>
-						<th scope="col">Descripcion</th>
-						<th scope="col">Finalizada</th>
-						<th scope="col">Fecha</th>
-						<th scope="col">Modalidad</th>
+						<th scope="col">Ruta</th>
+						<th scope="col">Tarifa</th>
+						<th scope="col">Categoria</th>
 						<th scope="col">Expediente</th>
 						<th scope="col">Activo</th>
 						<th scope="col">Funciones</th>
@@ -157,18 +145,15 @@
 
 							<!-- Se crea algo parecido a un formulario, sirve para acutalizar los registros -->
 
-							<ng-container *ngIf="codigoSeleccionado == tipo.descripcion; else mostrarFila">
+							<ng-container *ngIf="codigoSeleccionado == tipo.ruta; else mostrarFila">
 								<td>
-									<input type="text" name="codigoNuevo" id="codigoNuevoInput" class="form-control" required [(ngModel)]="codigoNuevo"/>
+									<input type="file" name="image" id="image" class="form-control" accept="image/**" (change)="onFileSelectedActu($event)">
 								</td>
 								<td>
-										<input type="checkbox" class="form-check-input" id="finalizado" name="finalizado" [(ngModel)]="finalizado"/>
+									<input type="number" class="form-control" id="tarifa" name="tarifa" [(ngModel)]="tarifa"/>
 								</td>
 								<td>
-									<input type="date" name="fecha" id="fechaInput" class="form-control" [(ngModel)]="fecha"/>
-								</td>
-								<td>
-									<input type="text" name="modalidad" id="modalidadInput" class="form-control" [(ngModel)]="modalidad"/>
+									<input type="text" name="categoria" id="categoriaInput" class="form-control" [(ngModel)]="categoria"/>
 								</td>
 								<td>
 									<select [(ngModel)]="expedienteNuevo" class="form-select">
@@ -181,18 +166,16 @@
 									<input type="text" name="activo" id="activoInput" class="form-control" value="{{tipo.activo}}" disabled/>
 								</td>
 
-								<td>
+								<td class="w-25">
 									<button type="submit" (click)="
-																				                      actualizarTiposExpediente(
-																				                        tipo.descripcion,
-																				                        codigoNuevo,
-										                                                                finalizado,
-																				                        fecha,
-										                                                                modalidad,
-																				                        tipoExpdiente[0],
-																				                        tipo.activo
-																				                      )
-																				                    " class="btn btn-primary m-1">
+																														                      uploadActualizacion(
+																														                        tipo.ruta,
+																				                                                                tarifa,
+																				                                                                categoria,
+																														                        tipoExpdiente[0],
+																														                        tipo.activo
+																														                      )
+																														                    " class="btn btn-primary m-1">
 										Actualizar
 									</button>
 									<button class="btn btn-outline-dark m-1" (click)="cancelarTipo()">
@@ -204,40 +187,32 @@
 							<!-- Datos sin poder editarse -->
 
 							<ng-template #mostrarFila>
-								<td style="padding: 15px 0px 0px 21px" class="w-25">
-									{{ tipo.descripcion }}
+								<td class="w-25" style="padding: 15px 0px 0px 21px">
+									<button class="btn btn-outline-dark" (click)="verFoto(tipo.ruta)">{{ tipo.ruta }}</button>
 								</td>
-								<td style="padding: 15px 0px 0px 21px; width: 10px;">
-									<ng-container *ngIf="tipo.finalizado == 1; else mostrarNo">
-										Si
-									</ng-container>
-									<ng-template #mostrarNo>
-										No
-									</ng-template>
+								<td style="padding: 15px 0px 0px 21px; width: 100px;">
+									{{ tipo.tarifa }}
 								</td>
-								<td style="padding: 15px 0px 0px 21px;" class="w-15">
-									{{ tipo.fecha }}
+								<td style="padding: 15px 0px 0px 21px; width: 50px;">
+									{{ tipo.categoria }}
 								</td>
-								<td style="padding: 15px 0px 0px 21px">
-									{{ tipo.modalidad }}
-								</td>
-								<td style="padding: 15px 0px 0px 21px" class="w-25">
+								<td class="w-25" style="padding: 15px 0px 0px 21px">
 									{{ tipo.expediente.codigo }}
 								</td>
-								<td style="padding: 15px 0px 0px 21px; width: 10px;">
+								<td style="padding: 15px 0px 0px 21px;">
 									{{ tipo.activo }}
 								</td>
-								<td class="w-40">
-									<button class="btn btn-outline-dark m-1" (click)="editarTipo(tipo.descripcion, tipo.finalizado, tipo.fecha, tipo.modalidad, tipo.expediente.codigo)">
+								<td class="w-25"> 
+									<button class="btn btn-outline-dark m-1" (click)="editarTipo(tipo.ruta, tipo.tarifa, tipo.categoria, tipo.expediente.codigo)">
 										Editar
 									</button>
-									<button *ngIf="tipo.activo == 1 " class="btn btn-outline-danger m-1" (click)="borrarLogicamenteActuaciones(tipo.descripcion, tipo.expediente.codigo)">
+									<button *ngIf="tipo.activo == 1 " class="btn btn-outline-danger m-1" (click)="borrarLogicamenteDocumentos(tipo.ruta)">
 										Desactivar
 									</button>
-									<button *ngIf="tipo.activo == 0 " class="btn btn-outline-danger m-1" (click)="activar(tipo.descripcion, tipo.expediente.codigo)">
+									<button *ngIf="tipo.activo == 0 " class="btn btn-outline-danger m-1" (click)="activar(tipo.ruta)">
 										Activar
 									</button>
-									<button class="btn btn-outline-danger m-1" (click)="borrarFisicamenteActuaciones(tipo.descripcion, tipo.expediente.codigo)">
+									<button class="btn btn-outline-danger m-1" (click)="borrarFisicamenteDocumentos(tipo.ruta)">
 										Borrar
 									</button>
 								</td>
@@ -246,6 +221,11 @@
 					</tr>
 				</tbody>
 			</table>
+		</div>
+		<div *ngIf="foto">
+		
+			<img [src]="foto" alt="">
+			<button class="btn btn-outline-dark" (click)="cerrarFoto()">Cerrar</button>
 		</div>
 	</div>
 </body>
