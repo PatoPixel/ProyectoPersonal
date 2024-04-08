@@ -90,9 +90,8 @@ VALUES
 INSERT INTO documentos
 (ruta, tarifa, categoria,expediente)
 VALUES 
-("static", 100.55, "Sport", 1),
-("static/pdfs/doc002d.pdf", 90.55, "Futbil", 2),
-("static/pdfs/doc003d.pdf", 80.55, "Financiera", 3);
+("/media/sistema-elex.png", 100.55, "Elex", 1);
+
 
 SELECT * FROM tipos_expediente;
 SELECT * FROM expedientes;
